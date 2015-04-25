@@ -5,10 +5,9 @@
 // @description    Preview to the top comments on Reddit (optional: autoload comments, autoload images, autohide sidebar)
 // @include        /^https?://(.+\.)?reddit\.com/.*$/
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
-// @grant          meta-detablock
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.82
+// @version        1.83
 // ==/UserScript==
 (function () {
   'use strict';
