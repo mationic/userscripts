@@ -10,6 +10,7 @@
 // @grant          GM_setValue
 // @version        1.82
 // ==/UserScript==
+
 (function () {
   'use strict';
   var topCP = {
