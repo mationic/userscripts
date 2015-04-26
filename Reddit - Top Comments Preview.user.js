@@ -23,8 +23,8 @@
             disableAutoloadButton: false,
             /* set keyboard shortcut 't' to show/hide active top comments (needs RES) */
             disableShortCut: false,
-            /* Add comments below self posts text */
-            keepSelfPostsOnTop: true
+            /* Add the comments  self posts text */
+            selfPostsAboveComments: false
         },
         addTopLinks: function() {
             var i,
@@ -75,7 +75,7 @@
                 pre = document.createElement('div');
                 pre.setAttribute('id', 'preview' + articleID);
                 pre.classList.add('loading');
-                if (GM_getValue('autoLoadComments', false) || (topCP.opts.keepSelfPostsOnTop && ele.querySelector('.expando').parentNode.parentNode.classList.contains('self'))) {
+                if (GM_getValue('autoLoadComments', false) || (topCP.opts.selfPostsAboveComments && ele.querySelector('.expando').parentNode.parentNode.classList.contains('self'))) {
                     ele.appendChild(pre);
                 } else {
                     ele.insertBefore(pre, ele.querySelector('.expando'));
