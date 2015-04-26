@@ -7,7 +7,7 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.84
+// @version        1.83
 // ==/UserScript==
 (function() {
     'use strict';
@@ -22,7 +22,9 @@
             /* Disables the autoloading option for images and comments. */
             disableAutoloadButton: false,
             /* set keyboard shortcut 't' to show/hide active top comments (needs RES) */
-            disableShortCut: false
+            disableShortCut: false,
+            /* Add comments below self posts text */
+            keepSelfPostsOnTop: true
         },
         addTopLinks: function() {
             var i,
@@ -68,17 +70,12 @@
                 url,
                 xhr,
                 thisPre;
-            
-            topCP.kill_preview = function() {
-                this.parentNode.removeChild(this);
-            };
             ele = ele.parentNode.parentNode.parentNode;
             if (!document.querySelector('#preview' + articleID)) {
                 pre = document.createElement('div');
                 pre.setAttribute('id', 'preview' + articleID);
                 pre.classList.add('loading');
-                // ele.querySelector('.expando').parentNode.parentNode.classList.contains('self, image, video, video-muted gallery')
-                if (GM_getValue('autoLoadComments', false)) {
+                if (GM_getValue('autoLoadComments', false) || (topCP.opts.keepSelfPostsOnTop && ele.querySelector('.expando').parentNode.parentNode.classList.contains('self'))) {
                     ele.appendChild(pre);
                 } else {
                     ele.insertBefore(pre, ele.querySelector('.expando'));
