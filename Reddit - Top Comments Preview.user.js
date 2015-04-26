@@ -7,7 +7,7 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.83
+// @version        1.84
 // ==/UserScript==
 (function() {
     'use strict';
