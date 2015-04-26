@@ -15,6 +15,7 @@ Original script from userscripts.org with following updates:
 
 --
 *v1.80*
+
 I finally added a storing option for the settings.
 There are two new menu buttons, one to hide/show the sidebar, one for autoloading the comments and images. The script is tested on Chrome and Firefox. Please contact me if you encounter any problems.
 
