@@ -18,8 +18,8 @@ function loadImgs()
   var q = $('div[id*="post_"]');
   if (!query.size())
   {
-      query = $('div#archive');
-      q = $('.xxx').parent();
+    query = $('div#archive');
+    q = $('.xxx').parent();
   }
   query.each(function (i)
   {
@@ -29,23 +29,26 @@ function loadImgs()
       var imgs = $('<div>', {
         'class': 'images'
       });
-      
-      
       var p = $(this).find('.pages').last();
       if (p.size())
       {
-          $(this).before(p.parent(), imgs);
-      }
+        $(this).before(p.parent(), imgs);
+      } 
       else
       {
-          imgs.appendTo($(this));
+        imgs.appendTo($(this));
       }
       $(this).find(q).each(function (i) {
         if (!$(this).hasClass('imgdone'))
         {
           $(this).addClass('imgdone');
-          $.get($(this).find('a').attr('href'), function (data) {
-            imgs.append($(data).find('div.s').find('img') [1]);
+          var href = $(this).find('a').attr('href');
+          $.get(href, function (data) {
+            var link = $('<a>', {
+              'href': href
+            });
+            link.append($(data).find('div[id*=\'albums\']').find('img'));
+            imgs.append(link);
           });
         }
       });
@@ -54,34 +57,32 @@ function loadImgs()
 }
 $(function ()
 {
-    
-  var l = $('<div>', {
+  var l = $('<a>', {
     id: 'loadImgs',
-    style: 'margin-left: 110px;text-decoration: underline;color:#f00;cursor:pointer;font-weight: bolder;',
-    text: 'Show images'
+    class: 'subm_link',
+    style: 'color:#FF4700;cursor:pointer;font-weight:bold;',
+    text: 'Load images'
   }).click(function (e)
   {
+    var query;
     if ($('div#loadImgs').hasClass('imagesVisible')) {
       $('div#loadImgs').removeClass('imagesVisible');
-      $('div#loadImgs').html('Show images');
+      $('div#loadImgs').html('Load images');
       $('div.images').hide();
-      var query = $('div[id*="post_"]');
+      query = $('div[id*="post_"]');
       if (!query.size()) query = $('.xxx').parent();
       query.show();
     } else {
       $('div#loadImgs').addClass('imagesVisible');
-      $('div#loadImgs').html('Show thumbnails');
+      $('div#loadImgs').html('Load thumbnails');
       $('div.images').show();
-      var query = $('div[id*="post_"]');
+      query = $('div[id*="post_"]');
       if (!query.size()) query = $('.xxx').parent();
       query.hide();
       loadImgs();
     }
   });
-  var query = $('.search_result_cams_2');
-  if (!query.size()) query = $('#search').parent();
-  l.insertAfter(query);
-  
+  $('.sm-navlist').append($('<li>').append(l));
   $(document).bind('DOMNodeInserted', function (e)
   {
     if ($('div#loadImgs').hasClass('imagesVisible') && e.target.tagName === 'DIV' && e.target.getAttribute('id') && (e.target.getAttribute('id') == 'loop' || e.target.getAttribute('id') == 'archive'))
