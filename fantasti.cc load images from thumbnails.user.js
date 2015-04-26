@@ -9,7 +9,7 @@
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
-// @version	   0.4
+// @version	   0.5
 // @grant          none
 // ==/UserScript==
 function loadImgs()
