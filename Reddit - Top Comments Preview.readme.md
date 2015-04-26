@@ -22,4 +22,4 @@ There are two new menu buttons, one to hide/show the sidebar, one for autoloadin
 If you don't care about the new features and just want the normal comment preview, you can disable the new menu buttons in the options part of the script. There is also an option to change the comment sorting now.
 
 Please notice that the comment autoloading produces a lot of over-hat and therefore can cause a lot of traffic in the background. A new loaded page on Reddit produces lots of comment-requests at once. That will cause some requests to fail. Currently every request will just be repeated until success. That may take a while sometimes.
-You should disable the autoloading if Reddit already has connection problems. Otherwise it will produce a lot of repeating requests (like small DOS-attack), causing even more stress for the server.
+You should disable the autoloading if Reddit already has connection problems. Otherwise it will produce more and more repeating requests, causing even more stress for the server (similar to a small DOS-Attack).
