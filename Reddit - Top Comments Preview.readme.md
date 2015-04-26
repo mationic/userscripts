@@ -1,11 +1,4 @@
-1.80
-I finally added a storing option (for the settings).
-There are two new menu buttons, one to hide/show the sidebar, one for autoloading the comments and images. The script should work on Chrome and Firefox, at least it did for me... Please contact me if you have problems / the script is not working.
-They only things stored are the settings from added menu, currently three booleans.
 
-If you don't care about the new features and just want the normal comment preview, you can disable the new menu buttons in the options part of the script. There is also an option to change the comment sorting now.
-
---
 
 Original script from userscripts.org with following updates:
  - added https
@@ -19,6 +12,12 @@ Original script from userscripts.org with following updates:
 
 <s>The auto loading options are disabled by default. For activating you have to set the corresponding variables to true in the options part of the script.</s>
 
-Comment autoloading can cause problems!
-The autoloading option produces a lot of overhat and cause a lot of traffic in the background. A new loaded page on Reddit produces lots of requests in a short time. That will cause some requests to fail. Currently every request will be repeated until success. It may take a while sometimes.
-When there are connection problems, like Reddits server are overloaded again, I strongly suggest to switch off the autoloading.
+    v1.80
+
+I finally added a storing option for the settings.
+There are two new menu buttons, one to hide/show the sidebar, one for autoloading the comments and images. The script is tested on Chrome and Firefox. Please contact me if you encounter any problems.
+
+If you don't care about the new features and just want the normal comment preview, you can disable the new menu buttons in the options part of the script. There is also an option to change the comment sorting now.
+
+Please notice that the comment autoloading produces a lot of over-hat and therefore can cause a lot of traffic in the background. A new loaded page on Reddit produces lots of comment-requests at once. That will cause some requests to fail. Currently every request will just be repeated until success. That may take a while sometimes.
+You should disable the autoloading if Reddit already has connection problems. Otherwise it will produce a lot of repeating requests (like small DOS-attack), causing even more stress for the server.
