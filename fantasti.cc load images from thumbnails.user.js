@@ -9,7 +9,7 @@
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
-// @version	   0.5
+// @version	   0.6
 // @grant          none
 // ==/UserScript==
 function loadImgs()
@@ -65,16 +65,16 @@ $(function ()
   }).click(function (e)
   {
     var query;
-    if ($('div#loadImgs').hasClass('imagesVisible')) {
-      $('div#loadImgs').removeClass('imagesVisible');
-      $('div#loadImgs').html('Load images');
+    if ($('a#loadImgs').hasClass('imagesVisible')) {
+      $('a#loadImgs').removeClass('imagesVisible');
+      $('a#loadImgs').html('Load images');
       $('div.images').hide();
       query = $('div[id*="post_"]');
       if (!query.size()) query = $('.xxx').parent();
       query.show();
     } else {
-      $('div#loadImgs').addClass('imagesVisible');
-      $('div#loadImgs').html('Load thumbnails');
+      $('a#loadImgs').addClass('imagesVisible');
+      $('a#loadImgs').html('Load thumbnails');
       $('div.images').show();
       query = $('div[id*="post_"]');
       if (!query.size()) query = $('.xxx').parent();
@@ -85,7 +85,7 @@ $(function ()
   $('.sm-navlist').append($('<li>').append(l));
   $(document).bind('DOMNodeInserted', function (e)
   {
-    if ($('div#loadImgs').hasClass('imagesVisible') && e.target.tagName === 'DIV' && e.target.getAttribute('id') && (e.target.getAttribute('id') == 'loop' || e.target.getAttribute('id') == 'archive'))
+    if ($('a#loadImgs').hasClass('imagesVisible') && e.target.tagName === 'DIV' && e.target.getAttribute('id') && (e.target.getAttribute('id') == 'loop' || e.target.getAttribute('id') == 'archive'))
     {
       $('div.images').show();
       $('div[id*="post_"]').hide();
