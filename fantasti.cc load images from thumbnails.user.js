@@ -2,7 +2,7 @@
 // @name           fantasti.cc load images from thumbnails
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie
-// @description	   Show images instead of thumbnails (works with AutoPager or similar programs for endless scrolling)
+// @description	   Show images instead of thumbnails (+ endless scrolling with AutoPager)
 //
 // @include        /^https?://(.+\.)?fantasti\.cc/(.+/)?images/.*$/
 // @exclude        http://fantasti.cc/category/tagcloud/images/*
