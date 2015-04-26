@@ -5,11 +5,12 @@
 // @description	   Show images instead of thumbnails (+ endless scrolling with AutoPager)
 //
 // @include        /^https?://(.+\.)?fantasti\.cc/(.+/)?images/.*$/
+// @exclude        /^https?://(.+\.)?fantasti\.cc/(.+/)?images/image/.*$/
 // @exclude        http://fantasti.cc/category/tagcloud/images/*
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
-// @version	   0.6
+// @version	   0.7
 // @grant          none
 // ==/UserScript==
 function loadImgs()
@@ -61,20 +62,20 @@ $(function ()
     id: 'loadImgs',
     class: 'subm_link',
     style: 'color:#FF4700;cursor:pointer;font-weight:bold;',
-    text: 'Load images'
+    text: 'Show images'
   }).click(function (e)
   {
     var query;
     if ($('a#loadImgs').hasClass('imagesVisible')) {
       $('a#loadImgs').removeClass('imagesVisible');
-      $('a#loadImgs').html('Load images');
+      $('a#loadImgs').html('Show images');
       $('div.images').hide();
       query = $('div[id*="post_"]');
       if (!query.size()) query = $('.xxx').parent();
       query.show();
     } else {
       $('a#loadImgs').addClass('imagesVisible');
-      $('a#loadImgs').html('Load thumbnails');
+      $('a#loadImgs').html('Show thumbnails');
       $('div.images').show();
       query = $('div[id*="post_"]');
       if (!query.size()) query = $('.xxx').parent();
