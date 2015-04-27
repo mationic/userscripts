@@ -23,8 +23,8 @@
             disableAutoloadButton: false,
             /* set keyboard shortcut 't' to show/hide active top comments (needs RES) */
             disableShortCut: false,
-            /* Add the comments  self posts text */
-            selfPostsAboveComments: false
+            /* Classes added here will receive their comments below the link */
+            selfPostsAboveComments: ['selftext', 'image', 'video-muted', 'video']
         },
         addTopLinks: function() {
             var i,
@@ -75,10 +75,24 @@
                 pre = document.createElement('div');
                 pre.setAttribute('id', 'preview' + articleID);
                 pre.classList.add('loading');
-                if (GM_getValue('autoLoadComments', false) || (topCP.opts.selfPostsAboveComments && ele.querySelector('.expando').parentNode.parentNode.classList.contains('self'))) {
+                pre.classList.add('commentbox');
+                var commentsBelow = false;
+                var button = ele.querySelector('.expando-button');
+                if (button !== null && topCP.containSameElemet(topCP.opts.selfPostsAboveComments, button.classList)) commentsBelow = true;
+                if (GM_getValue('autoLoadComments', false) || commentsBelow) {
                     ele.appendChild(pre);
+                    //                    if (GM_getValue('autoExpandImages', false) || topCP.opts.selfPostsAboveComments)
+                    //                    {
+                    ele.addEventListener('DOMNodeInserted', function(e) {
+                        if (e.target.tagName === 'DIV' && e.target.classList && e.target.classList.contains('madeVisible') && e.target.parentNode && e.target.parentNode.querySelector('.commentbox')) {
+                            var p = e.target.parentNode.querySelector('.commentbox');
+                            e.target.parentNode.removeChild(p);
+                            e.target.parentNode.appendChild(p);
+                        }
+                    }, false);
+                    //                    }
                 } else {
-                    ele.insertBefore(pre, ele.querySelector('.expando'));
+                    ele.insertBefore(pre, ele.parentNode.querySelector('.expando'));
                 }
             }
             if (document.querySelector('#preview' + articleID).classList.contains('loading')) {
@@ -168,6 +182,11 @@
             (function(style) {
                 style.display = style.display === 'none' ? '' : 'none';
             })(document.querySelector(className).style);
+        },
+        containSameElemet: function(a1, a2) {
+            for (var i = 0; i < a1.length; i++)
+                if (a2.contains(a1[i])) return true;
+            return false;
         },
         init: function() {
             if (!topCP.opts.disableSidebarButton) {

@@ -16,8 +16,8 @@ Original script from userscripts.org with following updates:
 --
 *v1.84*
 
-Autoload adds comments after expanded entries for better visibility.
-Added option for adding comments after self post entries.
+Moved autoloaded comments to bottom of entry.
+Added option for selfposts to move comments to bottom.
 
 
 --
