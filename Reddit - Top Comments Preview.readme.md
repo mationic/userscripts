@@ -14,10 +14,13 @@ Original script from userscripts.org with following updates:
 
 
 --
-*v1.84*
+*v1.85*
 
-Moved autoloaded comments to bottom of entry.
-Added option for selfposts to move comments to bottom.
+Moved comments to bottom of entry for autloading mode.
+Without autloading the comments are still at to the top.
+If you prefer other settings, you can change the positions
+for the different media types in the options part of the script.
+
 
 
 --

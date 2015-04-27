@@ -15,19 +15,19 @@
         opts: {
             /* Number of comments to display. Default is 3 */
             topComments: 3,
-            /* Change  comment sorting. Availables: top, best, new, hot, controversial, old */
+            /* Change  comment sorting. Available: top, best, new, hot, controversial, old */
             commentSorting: 'top',
             /* Autoloaded comments will be added at the bottom of the entry. */
             autoCommentsAtBottom: true,
             /* Manual loaded comments will be added at the top of the entry. Change Links to bottom  by adding
              * corresponding class to array. Available: 'selftext', 'image', 'video-muted', 'video'  (last 3 only in RES) */
-            cmtsToBottomClasses: ['selftext'],
+            cmtsToBtmLinks: ['selftext'],
             /* Disables the option for hiding the sidebar. */
             disableSidebarButton: false,
             /* Disables the option for autoloading images and comments. */
             disableAutoloadButton: false,
             /* Disable keyboard shortcut ('t') for showing comments (shortcut needs RES) */
-            disableShortCut: false,
+            disableShortCut: false
         },
         addTopLinks: function() {
             var i,
@@ -79,13 +79,11 @@
                 pre.setAttribute('id', 'preview' + articleID);
                 pre.classList.add('loading');
                 pre.classList.add('commentbox');
-                var commentsBelow = false;
-                var button = ele.querySelector('.expando-button');
-                if (button !== null && topCP.containSameElemet(topCP.opts.selfPostsAboveComments, button.classList)) commentsBelow = true;
-                if (GM_getValue('autoLoadComments', false) || commentsBelow) {
+                var addToBottom = false;
+                var expando = ele.querySelector('.expando-button');
+                if (expando !== null && topCP.containSameElemet(topCP.opts.cmtsToBtmLinks, expando.classList)) addToBottom = true;
+                if (GM_getValue('autoLoadComments', false) && topCP.opts.autoCommentsAtBottom || addToBottom) {
                     ele.appendChild(pre);
-                    //                    if (GM_getValue('autoExpandImages', false) || topCP.opts.selfPostsAboveComments)
-                    //                    {
                     ele.addEventListener('DOMNodeInserted', function(e) {
                         if (e.target.tagName === 'DIV' && e.target.classList && e.target.classList.contains('madeVisible') && e.target.parentNode && e.target.parentNode.querySelector('.commentbox')) {
                             var p = e.target.parentNode.querySelector('.commentbox');
@@ -93,7 +91,6 @@
                             e.target.parentNode.appendChild(p);
                         }
                     }, false);
-                    //                    }
                 } else {
                     ele.insertBefore(pre, ele.parentNode.querySelector('.expando'));
                 }
