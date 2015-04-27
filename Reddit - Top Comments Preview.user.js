@@ -7,7 +7,7 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.84
+// @version        1.85
 // ==/UserScript==
 (function() {
     'use strict';
@@ -17,14 +17,17 @@
             topComments: 3,
             /* Changes the comment sorting. Available sortings: top, best, new, hot, controversial, old */
             commentSorting: 'top',
+            /* Autoloaded comments will be added at the bottom of the entry. */
+            addAutoCommentsAtTop: false,
+            /* Manual loaded comments will be added at the top of the entry. You can change that by adding the corresponding
+             * class to this array. Available:  'selftext', 'image', 'video-muted', 'video'  (last 3 only in RES) */
+            addCommentsAtBottom: ['selftext'],
             /* Disables the option for hiding the sidebar. */
             disableSidebarButton: false,
-            /* Disables the autoloading option for images and comments. */
+            /* Disables the option for autoloading images and comments. */
             disableAutoloadButton: false,
-            /* set keyboard shortcut 't' to show/hide active top comments (needs RES) */
+            /* Disable keyboard shortcut ('t') for showing comments (shortcut needs RES) */
             disableShortCut: false,
-            /* Classes added here will receive their comments below the link */
-            selfPostsAboveComments: ['selftext', 'image', 'video-muted', 'video']
         },
         addTopLinks: function() {
             var i,
