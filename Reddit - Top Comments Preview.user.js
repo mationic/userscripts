@@ -15,13 +15,13 @@
         opts: {
             /* Number of comments to display. Default is 3 */
             topComments: 3,
-            /* Changes the comment sorting. Available sortings: top, best, new, hot, controversial, old */
+            /* Change  comment sorting. Availables: top, best, new, hot, controversial, old */
             commentSorting: 'top',
             /* Autoloaded comments will be added at the bottom of the entry. */
-            addAutoCommentsAtTop: false,
-            /* Manual loaded comments will be added at the top of the entry. You can change that by adding the corresponding
-             * class to this array. Available:  'selftext', 'image', 'video-muted', 'video'  (last 3 only in RES) */
-            addCommentsAtBottom: ['selftext'],
+            autoCommentsAtBottom: true,
+            /* Manual loaded comments will be added at the top of the entry. Change Links to bottom  by adding
+             * corresponding class to array. Available: 'selftext', 'image', 'video-muted', 'video'  (last 3 only in RES) */
+            cmtsToBottomClasses: ['selftext'],
             /* Disables the option for hiding the sidebar. */
             disableSidebarButton: false,
             /* Disables the option for autoloading images and comments. */
