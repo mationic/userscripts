@@ -9,18 +9,7 @@ Original script from userscripts.org with following updates:
  - option for auto loading all comments
  - option for hiding the sidebar
  - menu buttons for the settings
-
-<s>The auto loading options are disabled by default. For activating you have to set the corresponding variables to true in the options part of the script.</s>
-
-
---
-*v1.85*
-
-Moved comments to bottom of entry for autloading mode.
-Without autloading the comments are still at to the top.
-If you prefer other settings, you can change the positions
-for the different media types in the options part of the script.
-
+ - choose to add comments at bottom or top ot the entry
 
 
 --
@@ -31,5 +20,18 @@ There are two new menu buttons, one to hide/show the sidebar, one for autoloadin
 
 If you don't care about the new features and just want the normal comment preview, you can disable the new menu buttons in the options part of the script. There is also an option to change the comment sorting now.
 
-Please notice that the comment autoloading produces a lot of over-hat and therefore can cause a lot of traffic in the background. A new loaded page on Reddit produces lots of comment-requests at once. That will cause some requests to fail. Currently every request will just be repeated until success. That may take a while sometimes.
-You should disable the autoloading if Reddit already has connection problems. Otherwise it will produce more and more repeating requests, causing even more stress for the server (similar to a small DOS-Attack).
+
+--
+*v1.86*
+
+When autoloadeding, the new comments will now be added the bottom of the entry.
+Comments added through clicking will still be added to the top.
+
+You can adjust the position of the comments (for each expando type seperately if you want to)
+in the options of the script.
+
+
+
+
+Please note that the comment autoloading produces over-hat and  can cause a lot of traffic. A new loaded page on Reddit produces lots of comment requests at once. That will cause some requests to fail. Currently every request will just be repeated until success. That may take a while sometimes.
+If Reddit already has connection problems, you should disable autoloading. It will produce more and more repeating requests, causing even more stress for the server.

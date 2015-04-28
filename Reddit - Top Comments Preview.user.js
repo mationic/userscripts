@@ -7,7 +7,7 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.85
+// @version        1.86
 // ==/UserScript==
 (function() {
     'use strict';
@@ -17,11 +17,12 @@
             topComments: 3,
             /* Change  comment sorting. Available: top, best, new, hot, controversial, old */
             commentSorting: 'top',
-            /* Autoloaded comments will be added at the bottom of the entry. */
-            autoCommentsAtBottom: true,
-            /* Manual loaded comments will be added at the top of the entry. Change Links to bottom by adding
-             * corresponding class to array. Available: 'selftext', 'image', 'video-muted', 'video' (last 3 only in RES) */
-            cmtsToBtmLinks: ['selftext'],
+            /* When autoloading, comments of expandos in this array will be added at the bottom instead of the top. */
+            /* expandos: 'selftext', 'image', 'video-muted', 'video' */
+            autoLoadedCommentsAtBottom: ['selftext', 'image', 'video-muted', 'video'],
+            /* When clicking a top link, comments of expandos in ths array will be added at the bottom instead of the top. */
+            /* expandos: 'selftext', 'image', 'video-muted', 'video' */
+            clickLoadedCommentsAtBottom: [],
             /* Disables the option for hiding the sidebar. */
             disableSidebarButton: false,
             /* Disables the option for autoloading images and comments. */
@@ -81,8 +82,12 @@
                 pre.classList.add('commentbox');
                 var addToBottom = false;
                 var expando = ele.querySelector('.expando-button');
-                if (expando !== null && topCP.containSameElemet(topCP.opts.cmtsToBtmLinks, expando.classList)) addToBottom = true;
-                if (GM_getValue('autoLoadComments', false) && topCP.opts.autoCommentsAtBottom || addToBottom) {
+                if (GM_getValue('autoLoadComments', false)) {
+                    if (expando !== null && topCP.containSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
+                } else {
+                    if (expando !== null && topCP.containSameElemet(topCP.opts.clickLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
+                }
+                if (addToBottom) {
                     ele.appendChild(pre);
                     ele.addEventListener('DOMNodeInserted', function(e) {
                         if (e.target.tagName === 'DIV' && e.target.classList && (e.target.classList.contains('madeVisible') || e.target.classList.contains('usertext')) && e.target.parentNode && e.target.parentNode.querySelector('.commentbox')) {
@@ -92,7 +97,7 @@
                         }
                     }, false);
                 } else {
-                    ele.insertBefore(pre, ele.parentNode.querySelector('.expando'));
+                    ele.insertBefore(pre, ele.querySelector('.expando'));
                 }
             }
             if (document.querySelector('#preview' + articleID).classList.contains('loading')) {
