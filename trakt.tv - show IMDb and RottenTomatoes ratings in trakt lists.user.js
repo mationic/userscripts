@@ -29,13 +29,20 @@ $(function() {
                     url: "http://www.omdbapi.com/?plot=short&tomatoes=true&r=json&i=" + imdb,
                     onload: function(json) {
                         var res = $.parseJSON(json.responseText);
+                        console.log(res);
+                        if (typeof(res.imdbRating) == 'undefined' || res.imdbRating == "N/A") {
+                            res.imdbRating = '-   ';
+                            res.imdbVotes = 0;
+                        }
+                        if (typeof(res.tomatoRating) == 'undefined' || res.tomatoRating == "N/A") res.tomatoRating = '-';
+                        if (typeof(res.tomatoUserRating) == 'undefined' || res.tomatoUserRating == "N/A") res.tomatoUserRating = '-';
                         var h = $('<h4>', {
                             'class': 'ratings',
                             'html': 'IMDb: <span class="value">' + res.imdbRating + ' (' + res.imdbVotes + ' Votes)</span>'
                         });
                         var h2 = $('<h4>', {
                             'class': 'ratings',
-                            'html': 'R.T. c/u: <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;' + res.tomatoRating.replace("N/A", "-") + ' / ' + res.tomatoUserRating.replace("N/A", "-") + '</span>'
+                            'html': 'R.T. c/u: <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;' + res.tomatoRating + ' / ' + res.tomatoUserRating + '</span>'
                         });
                         $(movie).find('.quick-icons').after(h2);
                         $(movie).find('.quick-icons').after(h);
@@ -47,5 +54,16 @@ $(function() {
 
         }
     });
+
+    if ($('div[data-type="movie"]').size()) {
+        $('div[data-type="episode"]').each(function(i) {
+            var blank = $('<h4>', {
+                'class': 'ratings',
+                'html': '&nbsp;<span class="value">&nbsp;</span>'
+            });
+            $(this).find('.quick-icons').after(blank);
+            $(this).find('.quick-icons').after(blank.clone());
+        });
+    }
 
 });
