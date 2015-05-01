@@ -7,7 +7,7 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.87
+// @version        1.88
 // ==/UserScript==
 (function() {
     'use strict';
@@ -256,7 +256,7 @@
                     }
                     if (addToBottom) {
 
-                        var p = e.target.parentNode.querySelector('.commentbox');
+                        var p = e.target.parentNode.parentNode.querySelector('.commentbox');
                         if (p !== null) {
                             var pa = p.parentNode;
                             pa.removeChild(p);
