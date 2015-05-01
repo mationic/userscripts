@@ -7,7 +7,7 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.88
+// @version        1.89
 // ==/UserScript==
 (function() {
     'use strict';
@@ -247,16 +247,19 @@
                 if ((e.target.tagName === 'DIV') && (e.target.getAttribute('id') && e.target.getAttribute('id').indexOf('siteTable') !== -1)) {
                     topCP.addTopLinks();
                 }
-                if ((e.target.tagName === 'DIV') && (e.target.classList.contains('madeVisible'))) {
+                if ((e.target.tagName === 'DIV') && (e.target.classList.contains('madeVisible') || e.target.classList.contains('usertext'))) {
 
                     var addToBottom = false;
                     var expando = e.target.parentNode.querySelector('.expando-button');
                     if (GM_getValue('autoLoadComments', false)) {
                         if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
+                    } else {
+                        if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.clickLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
                     }
+
                     if (addToBottom) {
 
-                        var p = e.target.parentNode.parentNode.querySelector('.commentbox');
+                        var p = e.target.parentNode.querySelector('.commentbox');
                         if (p !== null) {
                             var pa = p.parentNode;
                             pa.removeChild(p);
