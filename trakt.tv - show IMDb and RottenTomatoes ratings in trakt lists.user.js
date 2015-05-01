@@ -2,15 +2,16 @@
 // @name           trakt.tv - show IMDb & RottenTomatoes ratings in trakt lists
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluis
 // @author         jesuis-parapluie
-// @description	   Loads ratings from omdbapi.com
+// @description	   Loads ratings from omdbapi.com - (trakt.tv site changes currently need manual reload to activate script) 
 //
-// @include        /^https?://(.+\.)?trakt\.tv/(.+/)?(lists|watchlist|collection)/?.*$/
+// @include        /^https?://(.+\.)?trakt\.tv/(.+/)?(lists|watchlist|collection|ratings|history)/?.*$/
+// @exclude        /^https?://(.+\.)?trakt\.tv/movies/.*$/
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.0.2
+// @version        0.0.3
 //
 // ==/UserScript==
 
