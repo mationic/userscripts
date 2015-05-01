@@ -6,8 +6,8 @@
 //
 // @include        /^https?://(.+\.)?trakt\.tv/(.+/)?lists/.*$/
 //
-// @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
-
+// @include        /^https?://(.+\.)?trakt\.tv/(.+/)?(lists|watchlist|collection)/?.*$/
+//
 // @grant          GM_xmlhttpRequest
 //
 // @version        0.0.1
