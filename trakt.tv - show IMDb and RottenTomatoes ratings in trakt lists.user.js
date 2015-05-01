@@ -6,9 +6,12 @@
 //
 // @include        /^https?://(.+\.)?trakt\.tv/(.+/)?(lists|watchlist|collection)/?.*$/
 //
+// @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
+//
 // @grant          GM_xmlhttpRequest
 //
 // @version        0.0.1
+//
 // ==/UserScript==
 
 $(function() {
