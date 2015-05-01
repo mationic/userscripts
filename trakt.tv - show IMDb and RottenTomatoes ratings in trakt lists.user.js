@@ -10,7 +10,7 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.0.2
+// @version        0.0.1
 //
 // ==/UserScript==
 
