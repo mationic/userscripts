@@ -33,7 +33,6 @@ $(function() {
                     url: "http://www.omdbapi.com/?plot=short&tomatoes=true&r=json&i=" + imdb,
                     onload: function(json) {
                         var res = $.parseJSON(json.responseText);
-                        console.log(res);
                         if (typeof(res.imdbRating) == 'undefined' || res.imdbRating == "N/A") {
                             res.imdbRating = '-   ';
                             res.imdbVotes = 0;
