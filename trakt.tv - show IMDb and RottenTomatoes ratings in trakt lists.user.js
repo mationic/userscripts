@@ -13,8 +13,8 @@
 
 $(function() {
 
-    $('head').append('<style>.ratings { padding-left: 5px!important; background-color: white; color: black; font-size: 12px!important; text-align: left!important; };</style>');
-    $('head').append('<style>.value { padding-left: 10px!important; font-weight: bolder!important; font-size: 13px!important; };</style>');
+    $('head').append('<style>.ratings { padding-left: 10px!important; background-color: white; color: black; font-size: 12px!important; text-align: left!important; };</style>');
+    $('head').append('<style>.value { padding-left: 15px!important; font-weight: bolder!important; font-size: 13px!important; };</style>');
 
     $('div[data-type="movie"]').each(function(i) {
 
@@ -35,7 +35,7 @@ $(function() {
                         });
                         var h2 = $('<h4>', {
                             'class': 'ratings',
-                            'html': 'RT (c/u): <span class="value">' + res.tomatoRating.replace("N/A", "-") + ' / ' + res.tomatoUserRating.replace("N/A", "-") + '</span>'
+                            'html': 'R.T. c/u: <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;' + res.tomatoRating.replace("N/A", "-") + ' / ' + res.tomatoUserRating.replace("N/A", "-") + '</span>'
                         });
                         $(movie).find('.quick-icons').after(h2);
                         $(movie).find('.quick-icons').after(h);
