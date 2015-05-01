@@ -7,7 +7,7 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.86
+// @version        1.87
 // ==/UserScript==
 (function() {
     'use strict';
@@ -66,7 +66,10 @@
         },
         addListener: function(link, id) {
             link.addEventListener('click', function() {
+                var s = GM_getValue('autoLoadComments', false);
+                GM_setValue('autoLoadComments', false);
                 topCP.retrieveTopComments(this, id);
+                GM_setValue('autoLoadComments', s);
             });
         },
         retrieveTopComments: function(ele, articleID) {
@@ -74,6 +77,7 @@
                 url,
                 xhr,
                 thisPre;
+
             ele = ele.parentNode.parentNode.parentNode;
             if (!document.querySelector('#preview' + articleID)) {
                 pre = document.createElement('div');
@@ -83,22 +87,18 @@
                 var addToBottom = false;
                 var expando = ele.querySelector('.expando-button');
                 if (GM_getValue('autoLoadComments', false)) {
-                    if (expando !== null && topCP.containSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
+                    if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
                 } else {
-                    if (expando !== null && topCP.containSameElemet(topCP.opts.clickLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
+                    if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.clickLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
                 }
+
                 if (addToBottom) {
                     ele.appendChild(pre);
-                    ele.addEventListener('DOMNodeInserted', function(e) {
-                        if (e.target.tagName === 'DIV' && e.target.classList && (e.target.classList.contains('madeVisible') || e.target.classList.contains('usertext')) && e.target.parentNode && e.target.parentNode.querySelector('.commentbox')) {
-                            var p = e.target.parentNode.querySelector('.commentbox');
-                            e.target.parentNode.removeChild(p);
-                            e.target.parentNode.appendChild(p);
-                        }
-                    }, false);
+
                 } else {
                     ele.insertBefore(pre, ele.querySelector('.expando'));
                 }
+
             }
             if (document.querySelector('#preview' + articleID).classList.contains('loading')) {
                 url = window.location.href.split('/')[0] + '//www.reddit.com/comments/' + articleID + '/.json?limit=' + (topCP.opts.topComments + 5) + '&sort=' + topCP.opts.commentSorting;
@@ -247,6 +247,25 @@
                 if ((e.target.tagName === 'DIV') && (e.target.getAttribute('id') && e.target.getAttribute('id').indexOf('siteTable') !== -1)) {
                     topCP.addTopLinks();
                 }
+                if ((e.target.tagName === 'DIV') && (e.target.classList.contains('madeVisible'))) {
+
+                    var addToBottom = false;
+                    var expando = e.target.parentNode.querySelector('.expando-button');
+                    if (GM_getValue('autoLoadComments', false)) {
+                        if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
+                    }
+                    if (addToBottom) {
+
+                        var p = e.target.parentNode.querySelector('.commentbox');
+                        if (p !== null) {
+                            var pa = p.parentNode;
+                            pa.removeChild(p);
+                            pa.appendChild(p);
+                        }
+
+                    }
+                }
+
             }, true);
             if (!topCP.opts.disableShortCut && document.querySelector('#RESConsoleVersion') !== null) {
                 window.addEventListener('keyup', function(e) {
