@@ -62,40 +62,65 @@
             }
 
         },
-        sortByRating = function() {
+        sortByRating = function(e) {
+            $('.trakt-icon-swap-vertical').next().find('button').html($(e.target).text() + " <span class='caret'></span>");
             var dict = {};
-            $("div.grid-item").each(function() {
-                var reg = $(this).find("h4.ratings").text().match(/IMDb\:\W+(\d\.\d).*/i);
-                var rating = 0;
-                if (reg.length > 0) rating = reg[1];
-                if (dict[rating] === undefined) {
-                    dict[rating] = [$(this)];
-                } else {
-                    dict[rating].push($(this));
-                }
-            });
+            if ($(e.target).attr('id') == 'originalOrder') {
+                dict = startOrder;
+            } else {
+                $("div.grid-item").each(function() {
+                    var rating = getRating(this, $(e.target).attr('id'));
+                    if (dict[rating] === undefined) {
+                        dict[rating] = [$(this)];
+                    } else {
+                        dict[rating].push($(this));
+                    }
+                });
+            }
             var order = Object.keys(dict).sort();
             var parent = $("div.grid-item").parent();
             while (order.length > 0) {
-                var items = rated[order.pop()];
+                var items = dict[order.pop()];
                 while (items.length > 0) parent.append(items.pop());
             }
-        };
+        },
+        getRating = function(item, type) {
+            var r;
+            if (type == 'trakt') {
+                r = $(item).find("div.percentage").text().slice(0, -1);
+                if (r !== null && r >= 0 && r <= 100) return r;
+            }
+            if (type == 'imdb') r = $(item).find("h4.ratings").text().match(/IMDb\:\W+(\d(\.\d)?).*/i);
+            if (type == 'rtcritic') r = $(item).find("h4.ratings").text().match(/R\.T\. c\/u\:\W+(\d(\.\d)?)-?\W*\/\W*\d?-?.*/i);
+            if (type == 'rtuser') r = $(item).find("h4.ratings").text().match(/R\.T\. c\/u\:\W+\d?\.?\d?-?\W*\/\W*(\d(\.\d)?)-?.*/i);
+            if (r !== null && r.length > 1) return r[1];
+            return -1;
+        },
+        init = function() {
+            if ($("div.grid-item[data-type='movie']").size() > 0) $('div.grid-item').each(getRatingsForElement);
+            var ch = $("div.grid-item").parent().children();
+            for (var i = 0; i < ch.length; i++) startOrder[i] = [$(ch[ch.length - i])];
+            var sortMenu = $('.trakt-icon-swap-vertical').next().find('ul');
+            sortMenu.find('a').attr('id', 'originalOrder');
+            sortMenu.append($('<li>', { html: "<a id='imdb'>IMDb Rating</a>" }));
+            sortMenu.append($('<li>', { html: "<a id='trakt'>Trakt Rating</a>" }));
+            sortMenu.append($('<li>', { html: "<a id='rtcritic'>RottenTomatoes critic</a>" }));
+            sortMenu.append($('<li>', { html: "<a id='rtuser'>RottenTomatoes user</a>" }));
+            sortMenu.find('a').click(sortByRating);
+        },
+        startOrder = {};
+
 
     $(window).ready(function() {
 
         $('head').append('<style>.ratings { padding-left: 10px!important; background-color: white; color: black; font-size: 12px!important; text-align: left!important; };</style>');
         $('head').append('<style>.value { padding-left: 8px!important; font-weight: bolder!important; font-size: 13px!important; };</style>');
-        if ($("div.grid-item[data-type='movie']").size() > 0) $('div.grid-item').each(getRatingsForElement);
-
-        $('.trakt-icon-list').click(sortByRating);
-
+        init();
 
         $(window).bind('DOMNodeInserted', function(e) {
             if (e.target.tagName == 'BODY') {
                 $(e.target).ready(function() {
-                    if ($("div.grid-item[data-type='movie']").size() > 0) $('div.grid-item').each(getRatingsForElement);
-                    $('.trakt-icon-list').click(sortByRating);
+                    init();
                 });
             }
         });
