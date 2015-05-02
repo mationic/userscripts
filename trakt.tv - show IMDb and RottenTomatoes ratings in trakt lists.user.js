@@ -95,7 +95,7 @@
         },
         init = function() {
 
-            if (/^\/users\/.+\/(collection|ratings|lists)/.test(window.location.pathname))
+            if (/^\/users\/.+\/(collection|ratings|lists\/|watchlist)/.test(window.location.pathname))
             {
                 var sortMenu = $('.trakt-icon-swap-vertical').next().find('ul');
                 sortMenu.find('a').attr('id', 'originalOrder');
