@@ -5,12 +5,13 @@
 // @description	   Adds ratings from IMDb and RottenTomatoes to trakt
 //
 // @include        /^https?://(.+\.)?trakt\.tv/?.*$/
+// @exclude        /^https?://(.+\.)?trakt\.tv/(shows|calendars)/?.*$/
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.0
+// @version        0.1.1
 //
 // ==/UserScript==
 
@@ -31,9 +32,10 @@
 
         if ($(this).attr('data-type') == 'movie') {
 
-
             var url = $(this).attr('data-url');
+
             if (url) {
+
                 var movie = $(this);
                 $.get(url, function(data) {
                     var imdb_id = $(data).find('.external a:contains("IMDB")').attr('href').split('/').pop();
@@ -65,16 +67,16 @@
 
         $('head').append('<style>.ratings { padding-left: 10px!important; background-color: white; color: black; font-size: 12px!important; text-align: left!important; };</style>');
         $('head').append('<style>.value { padding-left: 8px!important; font-weight: bolder!important; font-size: 13px!important; };</style>');
-        $('div.grid-item').each(getRatingsForElement);
+        if ($("div.grid-item[data-type='movie']").size() > 0) $('div.grid-item').each(getRatingsForElement);
 
         $(window).bind('DOMNodeInserted', function(e) {
-
             if (e.target.tagName == 'BODY') {
                 $(e.target).ready(function() {
-                    $('div.grid-item').each(getRatingsForElement);
+                    if ($("div.grid-item[data-type='movie']").size() > 0) $('div.grid-item').each(getRatingsForElement);
                 });
             }
         });
+
     });
 
 })();
