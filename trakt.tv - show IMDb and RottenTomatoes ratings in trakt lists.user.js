@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name           trakt.tv - add IMDb & RottenTomatoes movie ratings
+// @name           trakt.tv - add IMDb & RottenTomatoes movie ratings (+ added sorting options for ratings)
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluis
 // @author         jesuis-parapluie
-// @description	   Adds ratings from IMDb and RottenTomatoes to trakt
+// @description	   Inserts movie ratings from IMDb and RottenTomatoes into trakt and adds new sorting options for ratings.
 //
 // @include        /^https?://(.+\.)?trakt\.tv/?.*$/
 // @exclude        /^https?://(.+\.)?trakt\.tv/(shows|calendars)/?.*$/
