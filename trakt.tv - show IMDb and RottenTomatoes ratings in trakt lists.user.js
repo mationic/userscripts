@@ -11,7 +11,7 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.2
+// @version        0.1.3
 //
 // ==/UserScript==
 
@@ -65,10 +65,7 @@
         sortByRating = function(e) {
             $('.trakt-icon-swap-vertical').next().find('button').html($(e.target).text() + " <span class='caret'></span>");
             var dict = {};
-            if ($(e.target).attr('id') == 'originalOrder') {
-                dict = startOrder;
-            } else {
-                $("div.grid-item").each(function() {
+            $("div.grid-item").each(function() {
                     var rating = getRating(this, $(e.target).attr('id'));
                     if (dict[rating] === undefined) {
                         dict[rating] = [$(this)];
@@ -76,7 +73,6 @@
                         dict[rating].push($(this));
                     }
                 });
-            }
             var order = Object.keys(dict).sort();
             var parent = $("div.grid-item").parent();
             while (order.length > 0) {
@@ -86,6 +82,7 @@
         },
         getRating = function(item, type) {
             var r;
+            if (type == 'originalOrder') return $(item).attr('startOrder');
             if (type == 'trakt') {
                 r = $(item).find("div.percentage").text().slice(0, -1);
                 if (r !== null && r >= 0 && r <= 100) return r;
@@ -97,18 +94,21 @@
             return -1;
         },
         init = function() {
+
+            if (/^\/users\/.+\/(collection|ratings|lists)/.test(window.location.pathname))
+            {
+                var sortMenu = $('.trakt-icon-swap-vertical').next().find('ul');
+                sortMenu.find('a').attr('id', 'originalOrder');
+                sortMenu.append($('<li>', { html: "<a id='imdb'>IMDb Rating</a>" }));
+                sortMenu.append($('<li>', { html: "<a id='trakt'>Trakt Rating</a>" }));
+                sortMenu.append($('<li>', { html: "<a id='rtcritic'>RottenTomatoes critic</a>" }));
+                sortMenu.append($('<li>', { html: "<a id='rtuser'>RottenTomatoes user</a>" }));
+                sortMenu.find('a').click(sortByRating);
+            }
+
+            $("div.grid-item").each(function(i){$(this).attr('startOrder',99-i)});
             if ($("div.grid-item[data-type='movie']").size() > 0) $('div.grid-item').each(getRatingsForElement);
-            var ch = $("div.grid-item").parent().children();
-            for (var i = 0; i < ch.length; i++) startOrder[i] = [$(ch[ch.length - i])];
-            var sortMenu = $('.trakt-icon-swap-vertical').next().find('ul');
-            sortMenu.find('a').attr('id', 'originalOrder');
-            sortMenu.append($('<li>', { html: "<a id='imdb'>IMDb Rating</a>" }));
-            sortMenu.append($('<li>', { html: "<a id='trakt'>Trakt Rating</a>" }));
-            sortMenu.append($('<li>', { html: "<a id='rtcritic'>RottenTomatoes critic</a>" }));
-            sortMenu.append($('<li>', { html: "<a id='rtuser'>RottenTomatoes user</a>" }));
-            sortMenu.find('a').click(sortByRating);
-        },
-        startOrder = {};
+        };
 
 
     $(window).ready(function() {
@@ -118,13 +118,9 @@
         init();
 
         $(window).bind('DOMNodeInserted', function(e) {
-            if (e.target.tagName == 'BODY') {
-                $(e.target).ready(function() {
-                    init();
-                });
-            }
+            if (e.target.tagName == 'BODY')  $(e.target).ready(init);
         });
-
+            
     });
 
 })();
