@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name           trakt.tv - add IMDb & RottenTomatoes movie ratings (+ sorting options for ratings)
+// @name           trakt.tv - add IMDb & RottenTomatoes movie ratings (and sorting options for ratings)
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluis
 // @author         jesuis-parapluie
-// @description	   Inserts movie ratings from IMDb and RottenTomatoes into trakt and adds new sorting options for ratings.
+// @description	   Inserts movie ratings from IMDb and RottenTomatoes into trakt and adds sorting options for ratings.
 //
 // @include        /^https?://(.+\.)?trakt\.tv/?.*$/
 // @exclude        /^https?://(.+\.)?trakt\.tv/(shows|calendars)/?.*$/
@@ -11,7 +11,7 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.4
+// @version        0.1.5
 //
 // ==/UserScript==
 
@@ -52,7 +52,7 @@
                                 if (typeof(res.tomatoRating) == 'undefined' || res.tomatoRating == "N/A") res.tomatoRating = '-';
                                 if (typeof(res.tomatoUserRating) == 'undefined' || res.tomatoUserRating == "N/A") res.tomatoUserRating = '-';
                                 $(imdb).find('span').html(res.imdbRating + ' (' + res.imdbVotes + ' Votes)');
-                                $(tomatoes).find('span').html('&nbsp;&nbsp;&nbsp;&nbsp;' + res.tomatoRating + ' / ' + res.tomatoUserRating + '</span>')
+                                $(tomatoes).find('span').html('&nbsp;&nbsp;&nbsp;&nbsp;' + res.tomatoRating + ' / ' + res.tomatoUserRating + '</span>');
                             }
                         });
 
