@@ -2,7 +2,7 @@
 // @name           trakt.tv - add IMDb & RottenTomatoes movie ratings (and sorting options for ratings)
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluis
 // @author         jesuis-parapluie
-// @description	   Inserts movie ratings from IMDb and RottenTomatoes into trakt and adds sorting options for ratings.
+// @description    Inserts movie ratings from IMDb and RottenTomatoes into trakt and adds sorting options for ratings.
 //
 // @include        /^https?://(.+\.)?trakt\.tv/?.*$/
 // @exclude        /^https?://(.+\.)?trakt\.tv/(shows|calendars)/?.*$/
@@ -11,14 +11,15 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.5
+// @version        0.1.6
 //
 // ==/UserScript==
+
+
 
 (function() {
     'use strict';
     var getRatingsForElement = function() {
-
             var imdb = $('<h4>', {
                 'class': 'ratings',
                 'html': 'IMDb: <span class="value">&nbsp;</span>'
@@ -33,13 +34,11 @@
             if ($(this).attr('data-type') == 'movie') {
 
                 var url = $(this).attr('data-url');
-
                 if (url) {
-
+                    $(imdb).find('span').html('<span style="color: gray!important; font-weight: normal; font-size: 11px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;loading<span>');
                     var movie = $(this);
                     $.get(url, function(data) {
                         var imdb_id = $(data).find('.external a:contains("IMDB")').attr('href').split('/').pop();
-
                         GM_xmlhttpRequest({
                             method: "GET",
                             url: "http://www.omdbapi.com/?plot=short&tomatoes=true&r=json&i=" + imdb_id,
@@ -53,6 +52,9 @@
                                 if (typeof(res.tomatoUserRating) == 'undefined' || res.tomatoUserRating == "N/A") res.tomatoUserRating = '-';
                                 $(imdb).find('span').html(res.imdbRating + ' (' + res.imdbVotes + ' Votes)');
                                 $(tomatoes).find('span').html('&nbsp;&nbsp;&nbsp;&nbsp;' + res.tomatoRating + ' / ' + res.tomatoUserRating + '</span>');
+                            },
+                            onerror: function(res) {
+                                $(imdb).find('span').html('<span style="color: red!important; font-weight: normal; font-size: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;failed<span>');
                             }
                         });
 
@@ -66,13 +68,13 @@
             $('.trakt-icon-swap-vertical').next().find('button').html($(e.target).text() + " <span class='caret'></span>");
             var dict = {};
             $("div.grid-item").each(function() {
-                    var rating = getRating(this, $(e.target).attr('id'));
-                    if (dict[rating] === undefined) {
-                        dict[rating] = [$(this)];
-                    } else {
-                        dict[rating].push($(this));
-                    }
-                });
+                var rating = getRating(this, $(e.target).attr('id'));
+                if (dict[rating] === undefined) {
+                    dict[rating] = [$(this)];
+                } else {
+                    dict[rating].push($(this));
+                }
+            });
             var order = Object.keys(dict).sort();
             var parent = $("div.grid-item").parent();
             while (order.length > 0) {
@@ -95,8 +97,7 @@
         },
         init = function() {
 
-            if (/^\/users\/.+\/(collection|ratings|lists\/|watchlist)/.test(window.location.pathname))
-            {
+            if (/^\/users\/.+\/(collection|ratings|lists\/|watchlist)/.test(window.location.pathname)) {
                 var sortMenu = $('.trakt-icon-swap-vertical').next().find('ul');
                 sortMenu.find('a').attr('id', 'originalOrder');
                 sortMenu.append($('<li>', { html: "<a id='imdb'>IMDb Rating</a>" }));
@@ -106,7 +107,9 @@
                 sortMenu.find('a').click(sortByRating);
             }
 
-            $("div.grid-item").each(function(i){$(this).attr('startOrder',99-i)});
+            $("div.grid-item").each(function(i) {
+                $(this).attr('startOrder', 99 - i)
+            });
             if ($("div.grid-item[data-type='movie']").size() > 0) $('div.grid-item').each(getRatingsForElement);
         };
 
@@ -118,9 +121,9 @@
         init();
 
         $(window).bind('DOMNodeInserted', function(e) {
-            if (e.target.tagName == 'BODY')  $(e.target).ready(init);
+            if (e.target.tagName == 'BODY') $(e.target).ready(init);
         });
-            
+
     });
 
 })();
