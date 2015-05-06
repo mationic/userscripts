@@ -56,7 +56,7 @@
         $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#c">Couple</a>' }).click(showc));
         $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#f">Female</a>' }).click(showc));
 
-        $(document).bind('DOMNodeInserted', function (event) {
+        document.addEventListener("DOMNodeInserted", function (event) {
             if ($(event.path[0]).hasClass('list')) { showc('update'); }
         });
         var setting = window.location.href.split("#");
