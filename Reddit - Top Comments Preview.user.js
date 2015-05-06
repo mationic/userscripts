@@ -7,10 +7,12 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.89
+// @version        1.90
 // ==/UserScript==
-(function() {
+(function () {
     'use strict';
+    /*jslint browser:true, newcap:true */
+    /*global GM_getValue, GM_setValue */
     var topCP = {
         opts: {
             /* Number of comments to display. Default is 3 */
@@ -30,7 +32,7 @@
             /* Disable keyboard shortcut ('t') for showing comments (shortcut needs RES) */
             disableShortCut: false
         },
-        addTopLinks: function() {
+        addTopLinks: function () {
             var i,
                 len,
                 link,
@@ -46,7 +48,6 @@
                         articleID = articleID.substring(articleID.indexOf('/comments/') + 10, articleID.indexOf('/comments/') + 16);
                         link = document.createElement('a');
                         li = document.createElement('li');
-                        //li.className = 'rcp';
                         li.appendChild(link);
                         link.className = 'toplink';
                         tmp = 'java';
@@ -64,32 +65,37 @@
                 }
             }
         },
-        addListener: function(link, id) {
-            link.addEventListener('click', function() {
+        addListener: function (link, id) {
+            link.addEventListener('click', function () {
                 var s = GM_getValue('autoLoadComments', false);
                 GM_setValue('autoLoadComments', false);
                 topCP.retrieveTopComments(this, id);
                 GM_setValue('autoLoadComments', s);
             });
         },
-        retrieveTopComments: function(ele, articleID) {
+        retrieveTopComments: function (ele, articleID) {
             var pre,
                 url,
                 xhr,
-                thisPre;
-
+                thisPre,
+                addToBottom,
+                expando;
             ele = ele.parentNode.parentNode.parentNode;
             if (!document.querySelector('#preview' + articleID)) {
                 pre = document.createElement('div');
                 pre.setAttribute('id', 'preview' + articleID);
                 pre.classList.add('loading');
                 pre.classList.add('commentbox');
-                var addToBottom = false;
-                var expando = ele.querySelector('.expando-button');
+                addToBottom = false;
+                expando = ele.querySelector('.expando-button');
                 if (GM_getValue('autoLoadComments', false)) {
-                    if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
+                    if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) {
+                        addToBottom = true;
+                    }
                 } else {
-                    if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.clickLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
+                    if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.clickLoadedCommentsAtBottom, expando.classList)) {
+                        addToBottom = true;
+                    }
                 }
 
                 if (addToBottom) {
@@ -105,7 +111,7 @@
                 xhr = new XMLHttpRequest();
                 xhr.open('GET', url, true);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onreadystatechange = function() {
+                xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4 && xhr.status === 200) {
                         topCP.onloadJSON(xhr);
                     } else if (xhr.status === 503) {
@@ -120,9 +126,8 @@
                 thisPre.parentNode.removeChild(thisPre);
             }
         },
-        onloadJSON: function(response) {
+        onloadJSON: function (response) {
             var i,
-                len,
                 content,
                 score,
                 contentDiv,
@@ -132,9 +137,9 @@
                 newHTML = '',
                 comments = JSON.parse(response.responseText),
                 commentsLength = comments[1].data.children.length,
+                len = topCP.opts.topComments < commentsLength ? topCP.opts.topComments : commentsLength,
                 articleID = comments[0].data.children[0].data.id,
                 threadLink = comments[0].data.children[0].data.permalink;
-            len = topCP.opts.topComments < commentsLength ? topCP.opts.topComments : commentsLength;
             for (i = 0; i < len; i += 1) {
                 content = comments[1].data.children[i].data.body_html;
                 if (content) {
@@ -157,7 +162,7 @@
                 article.innerHTML = newHTML;
             }
         },
-        addStyle: function() {
+        addStyle: function () {
             var style,
                 sheet = '';
             sheet += 'div[id^=preview]{box-sizing:border-box;-moz-box-sizing:border-box;background:#fff;border-radius:5px;border:1px solid #dbdbdb;white-space:normal;padding:5px;display:inline-block;margin:8px 0;}';
@@ -183,30 +188,43 @@
             style.textContent = sheet;
             document.querySelector('head').appendChild(style);
         },
-        toggle: function(className) {
-            (function(style) {
+        toggle: function (className) {
+            (function (style) {
                 style.display = style.display === 'none' ? '' : 'none';
-            })(document.querySelector(className).style);
+            }(document.querySelector(className).style));
         },
-        containSameElemet: function(a1, a2) {
-            for (var i = 0; i < a1.length; i++)
-                if (a2.contains(a1[i])) return true;
+        containSameElemet: function (a1, a2) {
+            var i = 0;
+            for (i = 0; i < a1.length; i += 1) {
+                if (a2.contains(a1[i])) {
+                    return true;
+                }
+            }
             return false;
         },
-        init: function() {
+        init: function () {
+            var text,
+                sidebar,
+                loadbar,
+                expimg,
+                expcom,
+                spanImages,
+                spanComments;
             if (!topCP.opts.disableSidebarButton) {
-                var text = 'hide';
+                text = 'hide';
+                sidebar = document.createElement('li');
                 if (GM_getValue('sideBarToggle', true)) {
                     text = 'show';
                     topCP.toggle('.side');
                 }
-                var sidebar = document.createElement('li');
                 sidebar.innerHTML = '<a class="sideswitch">' + text + ' sidebar</a>';
-                sidebar.addEventListener('click', function(e) {
+                sidebar.addEventListener('click', function () {
+                    text = 'hide';
                     topCP.toggle('.side');
                     GM_setValue('sideBarToggle', !GM_getValue('sideBarToggle', true));
-                    var text = 'hide';
-                    if (GM_getValue('sideBarToggle')) text = 'show';
+                    if (GM_getValue('sideBarToggle')) {
+                        text = 'show';
+                    }
                     document.querySelector('.sideswitch').innerHTML = text + ' sidebar';
                 });
                 document.querySelector('.tabmenu').appendChild(sidebar);
@@ -215,25 +233,29 @@
                 document.querySelector('.side').style.display = '';
             }
             if (!topCP.opts.disableAutoloadButton) {
-                var loadbar = document.createElement('li');
+                loadbar = document.createElement('li');
+                expimg = 'disabled';
+                expcom = 'disabled';
                 loadbar.className = 'aubox';
                 loadbar.innerHTML = '<a>load</a>';
                 if (document.querySelector('#RESConsoleVersion') !== null) {
-                    var expimg = 'disabled';
-                    if (GM_getValue('autoExpandImages', false)) expimg = 'enabled';
-                    var spanImages = document.createElement('span');
+                    if (GM_getValue('autoExpandImages', false)) {
+                        expimg = 'enabled';
+                    }
+                    spanImages = document.createElement('span');
                     spanImages.innerHTML = '<a href="#" class="' + expimg + '">images</a>';
-                    spanImages.addEventListener('click', function(e) {
+                    spanImages.addEventListener('click', function () {
                         GM_setValue('autoExpandImages', !GM_getValue('autoExpandImages', false));
                         location.reload();
                     });
                     loadbar.appendChild(spanImages);
                 }
-                var expcom = 'disabled';
-                if (GM_getValue('autoLoadComments', false)) expcom = 'enabled';
-                var spanComments = document.createElement('span');
+                if (GM_getValue('autoLoadComments', false)) {
+                    expcom = 'enabled';
+                }
+                spanComments = document.createElement('span');
                 spanComments.innerHTML = '<a href="#" class="' + expcom + '">comments</a>';
-                spanComments.addEventListener('click', function(e) {
+                spanComments.addEventListener('click', function () {
                     GM_setValue('autoLoadComments', !GM_getValue('autoLoadComments', false));
                     location.reload();
                 });
@@ -243,25 +265,29 @@
                 GM_setValue('autoExpandImages', false);
                 GM_setValue('autoLoadComments', false);
             }
-            document.body.addEventListener('DOMNodeInserted', function(e) {
+            document.body.addEventListener('DOMNodeInserted', function (e) {
                 if ((e.target.tagName === 'DIV') && (e.target.getAttribute('id') && e.target.getAttribute('id').indexOf('siteTable') !== -1)) {
                     topCP.addTopLinks();
                 }
                 if ((e.target.tagName === 'DIV') && (e.target.classList.contains('madeVisible') || e.target.classList.contains('usertext'))) {
 
-                    var addToBottom = false;
-                    var expando = e.target.parentNode.querySelector('.expando-button');
+                    var addToBottom = false,
+                        expando = e.target.parentNode.querySelector('.expando-button'),
+                        p,
+                        pa;
                     if (GM_getValue('autoLoadComments', false)) {
-                        if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
+                        if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) {
+                            addToBottom = true;
+                        }
                     } else {
-                        if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.clickLoadedCommentsAtBottom, expando.classList)) addToBottom = true;
+                        if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.clickLoadedCommentsAtBottom, expando.classList)) {
+                            addToBottom = true;
+                        }
                     }
-
                     if (addToBottom) {
-
-                        var p = e.target.parentNode.querySelector('.commentbox');
+                        p = e.target.parentNode.querySelector('.commentbox');
                         if (p !== null) {
-                            var pa = p.parentNode;
+                            pa = p.parentNode;
                             pa.removeChild(p);
                             pa.appendChild(p);
                         }
@@ -271,7 +297,7 @@
 
             }, true);
             if (!topCP.opts.disableShortCut && document.querySelector('#RESConsoleVersion') !== null) {
-                window.addEventListener('keyup', function(e) {
+                window.addEventListener('keyup', function (e) {
                     //t: keycode 84
                     if (e.keyCode === 84 && document.querySelector('.RES-keyNav-activeElement')) {
                         document.querySelector('.RES-keyNav-activeElement .toplink').click();
@@ -286,12 +312,12 @@
         }
     };
     if (document.body) {
-        setTimeout(function() {
+        setTimeout(function () {
             topCP.init();
         }, 300);
     } else {
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             topCP.init();
         }, false);
     }
-})();
+}());
