@@ -10,32 +10,35 @@
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
-// @version        0.8
+// @version        0.9
 // @grant          none
 // ==/UserScript==
 
 (function ($) {
     "use strict";
+    /*jslint browser:true */
+    /*global $, jQuery */
     var loadImgs = function () {
-        var query = $('div#loop');
-        var q = $('div[id*="post_"]');
+        var query = $('div#loop'),
+            q = $("div[id*='post_']");
         if (!query.size()) {
             query = $('div#archive');
             q = $('.xxx').parent();
         }
-        query.each(function (i) {
+        query.each(function () {
             if (!$(this).hasClass('done')) {
+                var imgs, p;
                 $(this).addClass('done');
-                var imgs = $('<div>', {
+                imgs = $('<div>', {
                     'class': 'images'
                 });
-                var p = $(this).find('.pages').last();
+                p = $(this).find('.pages').last();
                 if (p.size()) {
                     $(this).before(p.parent(), imgs);
                 } else {
                     imgs.appendTo($(this));
                 }
-                $(this).find(q).each(function (i) {
+                $(this).find(q).each(function () {
                     if (!$(this).hasClass('imgdone')) {
                         $(this).addClass('imgdone');
                         var href = $(this).find('a').attr('href');
@@ -53,40 +56,46 @@
     };
     $(function () {
         var link = $('<a>', {
-            id: 'loadImgs',
-            class: 'subm_link',
-            style: 'color:#FF4700;cursor:pointer;font-weight:bold;',
-            text: 'Show images'
-        }).click(function (e) {
+            'id': 'loadImgs',
+            'class': 'subm_link',
+            'style': 'color:#FF4700;cursor:pointer;font-weight:bold;',
+            'text': 'Show images'
+        }).click(function () {
             var query;
             if ($('a#loadImgs').hasClass('imagesVisible')) {
                 $('a#loadImgs').removeClass('imagesVisible');
                 $('a#loadImgs').html('Show images');
                 $('div.images').hide();
-                query = $('div[id*="post_"]');
-                if (!query.size()) query = $('.xxx').parent();
+                query = $("div[id*='post_']");
+                if (!$(query).size()) {
+                    query = $('.xxx').parent();
+                }
                 query.show();
             } else {
                 $('a#loadImgs').addClass('imagesVisible');
                 $('a#loadImgs').html('Show thumbnails');
                 $('div.images').show();
-                query = $('div[id*="post_"]');
-                if (!query.size()) query = $('.xxx').parent();
+                query = $("div[id*='post_']");
+                if (!$(query).size()) {
+                    query = $('.xxx').parent();
+                }
                 query.hide();
                 loadImgs();
             }
         });
         $('.sm-navlist').append($('<li>').append(link));
-        
+
         $(document).bind('DOMNodeInserted', function (e) {
-            if ($('a#loadImgs').hasClass('imagesVisible') && e.target.tagName === 'DIV' && e.target.getAttribute('id') && (e.target.getAttribute('id') == 'loop' || e.target.getAttribute('id') == 'archive')) {
+            if ($('a#loadImgs').hasClass('imagesVisible') && e.target.tagName === 'DIV' && e.target.getAttribute('id') && (e.target.getAttribute('id') === 'loop' || e.target.getAttribute('id') === 'archive')) {
                 $('div.images').show();
                 $('div[id*="post_"]').hide();
-                var query = $('div[id*="post_"]');
-                if (!query.size()) query = $('.xxx').parent();
+                var query = $("div[id*='post_']");
+                if (!query.size()) {
+                    query = $('.xxx').parent();
+                }
                 query.hide();
                 loadImgs();
             }
         });
     });
-})(jQuery);
+}(jQuery));
