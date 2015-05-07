@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           Startpage.com autopager
+// @name           Startpage.com Autopager
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie
 //
