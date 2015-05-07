@@ -13,7 +13,7 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 //
-// @version        0.0.3
+// @version        0.0.4
 // ==/UserScript==
 
 (function ($) {
@@ -28,7 +28,7 @@
         });
         breaker.css('width', $('#results_content .result').css('width'));
         $(document).bind('scroll', function () {
-            var pos = $('#results_content').height() - $('#footer').height() - $('#head').height() - $('#results_header').height() - $('body,html').scrollTop(),
+            var pos = $('#results_content').height() - $('#footer').height() - $('#head').height() - $('#results_header').height() - $('html,body').scrollTop(),
                 form = $('#nextnavbar form'),
                 data = "",
                 br,
@@ -53,10 +53,9 @@
                     },
                     onload: function (response) {
                         if ($(response.responseText).find('#results, #video_results').size()) {
-                            br.after($(response.responseText).find('#results, #video_results').html());
                             $('.classified').hide();
-                            $('.classified').last().show();
-                            br.css('font-style', 'inherit');
+                            br.after($(response.responseText).find('#results, #video_results').html());
+                            br.css('font-style', 'normal');
                             br.html('Page ' + br.find('.nr').html());
                             $('#search_footer').html($(response.responseText).find('#search_footer').html());
                         } else {
