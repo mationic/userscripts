@@ -7,7 +7,7 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.90
+// @version        1.91
 // ==/UserScript==
 (function () {
     'use strict';
@@ -17,7 +17,7 @@
         opts: {
             /* Number of comments to display. Default is 3 */
             topComments: 3,
-            /* Change  comment sorting. Available: top, best, new, hot, controversial, old */
+            /* Change comment sorting. Available: top, best, new, hot, controversial, old */
             commentSorting: 'top',
             /* When autoloading, comments of expandos in this array will be added at the bottom instead of the top. */
             /* expandos: 'selftext', 'image', 'video-muted', 'video' */
@@ -79,15 +79,15 @@
                 xhr,
                 thisPre,
                 addToBottom,
-                expando;
-            ele = ele.parentNode.parentNode.parentNode;
+                expando,
+                entry = ele.parentNode.parentNode.parentNode;
             if (!document.querySelector('#preview' + articleID)) {
                 pre = document.createElement('div');
                 pre.setAttribute('id', 'preview' + articleID);
                 pre.classList.add('loading');
                 pre.classList.add('commentbox');
                 addToBottom = false;
-                expando = ele.querySelector('.expando-button');
+                expando = entry.querySelector('.expando-button');
                 if (GM_getValue('autoLoadComments', false)) {
                     if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) {
                         addToBottom = true;
@@ -99,10 +99,10 @@
                 }
 
                 if (addToBottom) {
-                    ele.appendChild(pre);
+                    entry.appendChild(pre);
 
                 } else {
-                    ele.insertBefore(pre, ele.querySelector('.expando'));
+                    entry.insertBefore(pre, entry.querySelector('.expando'));
                 }
 
             }
