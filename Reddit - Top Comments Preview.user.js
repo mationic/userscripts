@@ -7,7 +7,7 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.91
+// @version        1.92
 // ==/UserScript==
 (function () {
     'use strict';
@@ -40,7 +40,7 @@
                 articleID,
                 tmp,
                 parent,
-                a = document.querySelectorAll('.linklisting:not(.NERdupe) .comments:not(.empty)');
+                a = document.querySelectorAll('.linklisting .comments:not(.empty)');
             if (a.length) {
                 for (i = 0, len = a.length; i < len; i += 1) {
                     if (!a[i].parentNode.parentNode.querySelector('.toplink') && /[0-9]/.test(a[i])) {
@@ -73,18 +73,16 @@
             });
         },
         retrieveTopComments: function (ele, articleID) {
-            var pre,
-                url,
+            var url,
                 xhr,
-                thisPre,
                 addToBottom,
                 expando,
+                comments = document.querySelector('#preview' + articleID),
                 entry = ele.parentNode.parentNode.parentNode;
-            if (!document.querySelector('#preview' + articleID)) {
-                pre = document.createElement('div');
-                pre.setAttribute('id', 'preview' + articleID);
-                pre.classList.add('loading');
-                pre.classList.add('commentbox');
+            if (comments === null) {
+                comments = document.createElement('div');
+                comments.setAttribute('id', 'preview' + articleID);
+                comments.classList.add('loading');
                 addToBottom = false;
                 expando = entry.querySelector('.expando-button');
                 if (ele.classList.contains('clicked')) {
@@ -98,14 +96,14 @@
                 }
 
                 if (addToBottom) {
-                    entry.appendChild(pre);
+                    entry.appendChild(comments);
 
                 } else {
-                    entry.insertBefore(pre, entry.querySelector('.expando'));
+                    entry.insertBefore(comments, entry.querySelector('.expando'));
                 }
 
             }
-            if (document.querySelector('#preview' + articleID).classList.contains('loading')) {
+            if (comments.classList.contains('loading')) {
                 url = window.location.href.split('/')[0] + '//www.reddit.com/comments/' + articleID + '/.json?limit=' + (topCP.opts.topComments + 5) + '&sort=' + topCP.opts.commentSorting;
                 xhr = new XMLHttpRequest();
                 xhr.open('GET', url, true);
@@ -120,17 +118,15 @@
                 };
                 xhr.send(null);
             } else {
-                thisPre = document.querySelector('#preview' + articleID);
-                thisPre.parentNode.parentNode.style.marginBottom = '';
-                thisPre.parentNode.removeChild(thisPre);
+                comments.parentNode.removeChild(comments);
             }
+
         },
         onloadJSON: function (response) {
             var i,
                 content,
                 score,
                 contentDiv,
-                article,
                 author,
                 permalink,
                 newHTML = '',
@@ -138,25 +134,25 @@
                 commentsLength = comments[1].data.children.length,
                 len = topCP.opts.topComments < commentsLength ? topCP.opts.topComments : commentsLength,
                 articleID = comments[0].data.children[0].data.id,
-                threadLink = comments[0].data.children[0].data.permalink;
-            for (i = 0; i < len; i += 1) {
-                content = comments[1].data.children[i].data.body_html;
-                if (content) {
-                    contentDiv = document.createElement('div');
-                    contentDiv.innerHTML = content;
-                    content = contentDiv.firstChild.textContent;
-                    author = comments[1].data.children[i].data.author;
-                    score = comments[1].data.children[i].data.score;
-                    permalink = threadLink + comments[1].data.children[i].data.id;
-                    newHTML += (i > 0 ? '<hr>' : '');
-                    newHTML += '<a class="ulink" target="_blank" href="/u/' + author;
-                    newHTML += '">' + author + '</a>';
-                    newHTML += '<span class="points">| score: ' + score + '</span>';
-                    newHTML += '<a class="permalink" target="_blank" href="' + permalink + '">permalink</a><br />' + content;
+                threadLink = comments[0].data.children[0].data.permalink,
+                article = document.querySelector('#preview' + articleID);
+            if (article && article.classList.contains('loading')) {
+                for (i = 0; i < len; i += 1) {
+                    content = comments[1].data.children[i].data.body_html;
+                    if (content) {
+                        contentDiv = document.createElement('div');
+                        contentDiv.innerHTML = content;
+                        content = contentDiv.firstChild.textContent;
+                        author = comments[1].data.children[i].data.author;
+                        score = comments[1].data.children[i].data.score;
+                        permalink = threadLink + comments[1].data.children[i].data.id;
+                        newHTML += (i > 0 ? '<hr>' : '');
+                        newHTML += '<a class="ulink" target="_blank" href="/u/' + author;
+                        newHTML += '">' + author + '</a>';
+                        newHTML += '<span class="points">| score: ' + score + '</span>';
+                        newHTML += '<a class="permalink" target="_blank" href="' + permalink + '">permalink</a><br />' + content;
+                    }
                 }
-            }
-            article = document.querySelector('#preview' + articleID);
-            if (article) {
                 article.classList.remove('loading');
                 article.innerHTML = newHTML;
             }
