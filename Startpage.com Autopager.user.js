@@ -5,7 +5,7 @@
 //
 // @description    Autopager for startpage.com
 //
-// @include        /^https?://(.+\.)?startpage\.com\/?do\/metasearch.pl.*$/
+// @include        /^https?://(.+\.)?startpage\.com\/?do\/(meta)?search.*$/
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
@@ -13,7 +13,7 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 //
-// @version        0.0.1
+// @version        0.0.2
 // ==/UserScript==
 
 (function ($) {
@@ -33,7 +33,7 @@
                 data = "",
                 br,
                 s;
-            if (!$('#results_content').hasClass('loading') && pos <= 100) {
+            if (!$('#results_content').hasClass('loading') && pos < 400) {
                 $('#results_content').addClass('loading');
                 br = breaker.clone();
                 s = parseInt($('#pnform').html().match(/.*&nbsp;(\d+)&nbsp;.*/).pop(), 10) + 1;
