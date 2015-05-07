@@ -7,7 +7,7 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.93
+// @version        1.94
 // ==/UserScript==
 (function () {
     'use strict';
@@ -37,8 +37,8 @@
                 link,
                 li,
                 articleID,
-                tmp,
                 parent,
+                tmp = 'java',
                 a = document.querySelectorAll('.linklisting .comments:not(.empty)');
             for (i = 0; i < a.length; i += 1) {
                 if (!a[i].parentNode.parentNode.querySelector('.toplink') && /[0-9]/.test(a[i])) {
@@ -48,7 +48,6 @@
                     li = document.createElement('li');
                     li.appendChild(link);
                     link.className = 'toplink';
-                    tmp = 'java';
                     link.href = tmp + 'script:;';
                     link.setAttribute('id', 'toplink' + articleID);
                     link.setAttribute('style', 'color:orangered;text-decoration:none;');
@@ -72,8 +71,8 @@
         retrieveTopComments: function (ele, articleID) {
             var url,
                 xhr,
-                addToBottom,
                 expando,
+                addToBottom = false,
                 comments = document.querySelector('#preview' + articleID),
                 entry = ele.parentNode.parentNode.parentNode;
             if (comments === null) {
@@ -81,7 +80,6 @@
                 comments.setAttribute('id', 'preview' + articleID);
                 comments.classList.add('commentbox');
                 comments.classList.add('loading');
-                addToBottom = false;
                 expando = entry.querySelector('.expando-button');
                 if (ele.classList.contains('clicked')) {
                     if (expando !== null && expando.classList && topCP.containsSameElemet(topCP.opts.clickLoadedCommentsAtBottom, expando.classList)) {
@@ -95,7 +93,6 @@
 
                 if (addToBottom) {
                     entry.appendChild(comments);
-
                 } else {
                     entry.insertBefore(comments, entry.querySelector('.expando'));
                 }
@@ -199,8 +196,8 @@
             var text,
                 sidebar,
                 loadbar,
-                expimg,
-                expcom,
+                expimg = 'disabled',
+                expcom = 'disabled',
                 spanImages,
                 spanComments;
             if (!topCP.opts.disableSidebarButton) {
@@ -227,8 +224,6 @@
             }
             if (!topCP.opts.disableAutoloadButton) {
                 loadbar = document.createElement('li');
-                expimg = 'disabled';
-                expcom = 'disabled';
                 loadbar.className = 'aubox';
                 loadbar.innerHTML = '<a>load</a>';
                 if (document.querySelector('#RESConsoleVersion') !== null) {
