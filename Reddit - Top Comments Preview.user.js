@@ -153,7 +153,7 @@
             }
         },
         addStyle: function () {
-            var style,
+            var style = document.createElement('style'),
                 sheet = '';
             sheet += 'div[id^=preview]{box-sizing:border-box;-moz-box-sizing:border-box;background:#fff;border-radius:5px;border:1px solid #dbdbdb;white-space:normal;padding:5px;display:inline-block;margin:8px 0;}';
             sheet += '.loading:before{content:"Loading...";}div[id^=preview] .md{border:1px solid #ddd;background:#f0f0f0;box-sizing:border-box;-moz-box-sizing:border-box;margin:3px 0;box-sizing:border-box;padding:2px 8px;}';
@@ -173,7 +173,6 @@
             sheet += '.res-nightmode div[id^=preview] .md{background:#555!important;border-color: #222!important;}';
             sheet += '.res-nightmode div[id^=preview] .md blockquote{color:#8C8C8C!important;}';
             sheet += '.res-nightmode div[id^=preview] hr{border-color:#777!important;}';
-            style = document.createElement('style');
             style.type = 'text/css';
             style.textContent = sheet;
             document.querySelector('head').appendChild(style);

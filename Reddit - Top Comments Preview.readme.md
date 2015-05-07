@@ -8,8 +8,8 @@ Original script from userscripts.org with following updates:
  - retries to fetch comments if Reddit doesn't respond
  - option for auto loading all comments
  - option for hiding the sidebar
- - menu buttons for the settings
- - choose to add comments at bottom or top ot the entry
+ - menu buttons for settings
+ - comments added at bottom of entry
 
 
 --
