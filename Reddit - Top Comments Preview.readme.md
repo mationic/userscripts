@@ -24,13 +24,10 @@ If you don't care about the new features and just want the normal comment previe
 --
 *v1.86*
 
-When autoloadeding, the new comments will now be added the bottom of the entry.
-Comments added through clicking will still be added to the top.
+When autoloading, comments will now be added the bottom of each entry.
+Comments added by clicking will still be added to the top.
 
-You can adjust the position of the comments (for each expando type seperately if you want to)
-in the options of the script.
-
-
+You can change the position of the comments in the options of the script.
 
 
 Please note that the comment autoloading produces over-hat and  can cause a lot of traffic. A new loaded page on Reddit produces lots of comment requests at once. That will cause some requests to fail. Currently every request will just be repeated until success. That may take a while sometimes.
