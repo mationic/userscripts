@@ -40,7 +40,7 @@
                 articleID,
                 tmp,
                 parent,
-                a = document.querySelectorAll('.linklisting .comments:not(.empty)');
+                a = document.querySelectorAll('.linklisting:not(.NERdupe) .comments:not(.empty)');
             if (a.length) {
                 for (i = 0, len = a.length; i < len; i += 1) {
                     if (!a[i].parentNode.parentNode.querySelector('.toplink') && /[0-9]/.test(a[i])) {
@@ -67,10 +67,9 @@
         },
         addListener: function (link, id) {
             link.addEventListener('click', function () {
-                var s = GM_getValue('autoLoadComments', false);
-                GM_setValue('autoLoadComments', false);
+                this.classList.add('clicked');
                 topCP.retrieveTopComments(this, id);
-                GM_setValue('autoLoadComments', s);
+                this.classList.remove('clicked');
             });
         },
         retrieveTopComments: function (ele, articleID) {
@@ -88,12 +87,12 @@
                 pre.classList.add('commentbox');
                 addToBottom = false;
                 expando = entry.querySelector('.expando-button');
-                if (GM_getValue('autoLoadComments', false)) {
-                    if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) {
+                if (ele.classList.contains('clicked')) {
+                    if (expando !== null && expando.classList && topCP.containsSameElemet(topCP.opts.clickLoadedCommentsAtBottom, expando.classList)) {
                         addToBottom = true;
                     }
                 } else {
-                    if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.clickLoadedCommentsAtBottom, expando.classList)) {
+                    if (expando !== null && expando.classList && topCP.containsSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) {
                         addToBottom = true;
                     }
                 }
@@ -193,7 +192,7 @@
                 style.display = style.display === 'none' ? '' : 'none';
             }(document.querySelector(className).style));
         },
-        containSameElemet: function (a1, a2) {
+        containsSameElemet: function (a1, a2) {
             var i = 0;
             for (i = 0; i < a1.length; i += 1) {
                 if (a2.contains(a1[i])) {
@@ -268,30 +267,14 @@
             document.body.addEventListener('DOMNodeInserted', function (e) {
                 if ((e.target.tagName === 'DIV') && (e.target.getAttribute('id') && e.target.getAttribute('id').indexOf('siteTable') !== -1)) {
                     topCP.addTopLinks();
-                }
-                if ((e.target.tagName === 'DIV') && (e.target.classList.contains('madeVisible') || e.target.classList.contains('usertext'))) {
-
-                    var addToBottom = false,
+                } else if (GM_getValue('autoLoadComments', false) && (e.target.tagName === 'DIV') && (e.target.classList.contains('madeVisible') || e.target.classList.contains('usertext'))) {
+                    var comments = e.target.parentNode.querySelector('.commentbox'),
                         expando = e.target.parentNode.querySelector('.expando-button'),
-                        p,
-                        pa;
-                    if (GM_getValue('autoLoadComments', false)) {
-                        if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) {
-                            addToBottom = true;
-                        }
-                    } else {
-                        if (expando !== null && expando.classList && topCP.containSameElemet(topCP.opts.clickLoadedCommentsAtBottom, expando.classList)) {
-                            addToBottom = true;
-                        }
-                    }
-                    if (addToBottom) {
-                        p = e.target.parentNode.querySelector('.commentbox');
-                        if (p !== null) {
-                            pa = p.parentNode;
-                            pa.removeChild(p);
-                            pa.appendChild(p);
-                        }
-
+                        parent;
+                    if (expando !== null && comments !== null && expando.classList && topCP.containsSameElemet(topCP.opts.autoLoadedCommentsAtBottom, expando.classList)) {
+                        parent = comments.parentNode;
+                        parent.removeChild(comments);
+                        parent.appendChild(comments);
                     }
                 }
 
