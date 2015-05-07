@@ -7,7 +7,7 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.92
+// @version        1.93
 // ==/UserScript==
 (function () {
     'use strict';
@@ -34,33 +34,30 @@
         },
         addTopLinks: function () {
             var i,
-                len,
                 link,
                 li,
                 articleID,
                 tmp,
                 parent,
                 a = document.querySelectorAll('.linklisting .comments:not(.empty)');
-            if (a.length) {
-                for (i = 0, len = a.length; i < len; i += 1) {
-                    if (!a[i].parentNode.parentNode.querySelector('.toplink') && /[0-9]/.test(a[i])) {
-                        articleID = a[i].getAttribute('href');
-                        articleID = articleID.substring(articleID.indexOf('/comments/') + 10, articleID.indexOf('/comments/') + 16);
-                        link = document.createElement('a');
-                        li = document.createElement('li');
-                        li.appendChild(link);
-                        link.className = 'toplink';
-                        tmp = 'java';
-                        link.href = tmp + 'script:;';
-                        link.setAttribute('id', 'toplink' + articleID);
-                        link.setAttribute('style', 'color:orangered;text-decoration:none;');
-                        link.textContent = ' ' + topCP.opts.commentSorting;
-                        parent = a[i].parentNode.parentNode;
-                        parent.insertBefore(li, parent.querySelector('.first + li'));
-                        topCP.addListener(link, articleID);
-                        if (GM_getValue('autoLoadComments', false)) {
-                            topCP.retrieveTopComments(link, articleID);
-                        }
+            for (i = 0; i < a.length; i += 1) {
+                if (!a[i].parentNode.parentNode.querySelector('.toplink') && /[0-9]/.test(a[i])) {
+                    articleID = a[i].getAttribute('href');
+                    articleID = articleID.substring(articleID.indexOf('/comments/') + 10, articleID.indexOf('/comments/') + 16);
+                    link = document.createElement('a');
+                    li = document.createElement('li');
+                    li.appendChild(link);
+                    link.className = 'toplink';
+                    tmp = 'java';
+                    link.href = tmp + 'script:;';
+                    link.setAttribute('id', 'toplink' + articleID);
+                    link.setAttribute('style', 'color:orangered;text-decoration:none;');
+                    link.textContent = ' ' + topCP.opts.commentSorting;
+                    parent = a[i].parentNode.parentNode;
+                    parent.insertBefore(li, parent.querySelector('.first + li'));
+                    topCP.addListener(link, articleID);
+                    if (GM_getValue('autoLoadComments', false)) {
+                        topCP.retrieveTopComments(link, articleID);
                     }
                 }
             }
@@ -82,6 +79,7 @@
             if (comments === null) {
                 comments = document.createElement('div');
                 comments.setAttribute('id', 'preview' + articleID);
+                comments.classList.add('commentbox');
                 comments.classList.add('loading');
                 addToBottom = false;
                 expando = entry.querySelector('.expando-button');
