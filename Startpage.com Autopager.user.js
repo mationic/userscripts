@@ -13,7 +13,7 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 //
-// @version        0.0.2
+// @version        0.0.3
 // ==/UserScript==
 
 (function ($) {
@@ -28,7 +28,7 @@
         });
         breaker.css('width', $('#results_content .result').css('width'));
         $(document).bind('scroll', function () {
-            var pos = $('#results_content').height() - $('#footer').height() - $('#head').height() - $('#results_header').height() - $('body').scrollTop(),
+            var pos = $('#results_content').height() - $('#footer').height() - $('#head').height() - $('#results_header').height() - $('body,html').scrollTop(),
                 form = $('#nextnavbar form'),
                 data = "",
                 br,
