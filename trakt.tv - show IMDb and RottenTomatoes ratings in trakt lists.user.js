@@ -11,7 +11,7 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.8
+// @version        0.1.9
 //
 // ==/UserScript==
 
@@ -21,7 +21,7 @@
     'use strict';
     /*jslint browser:true,regexp: true, newcap: true */
     /*global $, jQuery, GM_xmlhttpRequest */
-    var getRatingsForElement = function () {
+    var loadRatingsForItem = function () {
             var imdb = $('<h4>', {
                     'class': 'ratings',
                     'html': 'IMDb: <span class="value">&nbsp;</span>'
@@ -66,7 +66,7 @@
             }
 
         },
-        getRating = function (item, type) {
+        parseRating = function (item, type) {
             var r;
             if (type === 'originalOrder') { return $(item).attr('startOrder'); }
             if (type === 'trakt') {
@@ -74,7 +74,7 @@
                 if (r !== null && r >= 0 && r <= 100) { return r; }
             }
             if (type === 'imdb') { r = $(item).find("h4.ratings").text().match(/IMDb\:\W+(\d(\.\d)?).*/i); }
-            if (type === 'rtcritic') { r = $(item).find("h4.ratings").text().match(/R\.T\. c\/u\:\W+(\d(\.\d)?)-?\W*\/\W*\d?-?000.*/i); }
+            if (type === 'rtcritic') { r = $(item).find("h4.ratings").text().match(/R\.T\. c\/u\:\W+(\d(\.\d)?)-?\W*\/.*/i); }
             if (type === 'rtuser') { r = $(item).find("h4.ratings").text().match(/R\.T\. c\/u\:\W+\d?\.?\d?-?\W*\/\W*(\d(\.\d)?)-?.*/i); }
             if (r !== null && r.length > 1) { return r[1]; }
             return -1;
@@ -86,7 +86,7 @@
                 parent,
                 items;
             $("div.grid-item").each(function () {
-                var rating = getRating(this, $(e.target).attr('id'));
+                var rating = parseRating(this, $(e.target).attr('id'));
                 if (dict[rating] === undefined) {
                     dict[rating] = [$(this)];
                 } else {
@@ -97,7 +97,7 @@
             parent = $("div.grid-item").parent();
             while (order.length > 0) {
                 items = dict[order.pop()];
-                while (items.length > 0) { parent.append(items.pop()); }
+                while (items.length > 0) { parent.append(items.shift()); }
             }
         },
         init = function () {
@@ -106,7 +106,7 @@
 
             if (/^\/users\/.+\/(collection|ratings|lists\/|watchlist)/.test(window.location.pathname)) {
                 var sortMenu = $('.trakt-icon-swap-vertical').next().find('ul');
-                sortMenu.find('a').attr('id', 'originalOrder');
+                sortMenu.find('a').first().attr('id', 'originalOrder');
                 sortMenu.append($('<li>', { html: "<a id='imdb'>IMDb Rating</a>" }));
                 sortMenu.append($('<li>', { html: "<a id='trakt'>Trakt Rating</a>" }));
                 sortMenu.append($('<li>', { html: "<a id='rtcritic'>RottenTomatoes critic</a>" }));
@@ -117,7 +117,7 @@
             $("div.grid-item").each(function (i) {
                 $(this).attr('startOrder', 99 - i);
             });
-            if ($("div.grid-item[data-type='movie']").size() > 0) { $('div.grid-item').each(getRatingsForElement); }
+            if ($("div.grid-item[data-type='movie']").size() > 0) { $('div.grid-item').each(loadRatingsForItem); }
         };
 
 
