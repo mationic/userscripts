@@ -11,7 +11,7 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.9
+// @version        0.1.10
 //
 // ==/UserScript==
 
@@ -102,7 +102,7 @@
         },
         init = function () {
 
-            $("div[id*='huckster-desktop'").html('');
+            $("div[id*=\"huckster-desktop\"]").html("");
 
             if (/^\/users\/.+\/(collection|ratings|lists\/|watchlist)/.test(window.location.pathname)) {
                 var sortMenu = $('.trakt-icon-swap-vertical').next().find('ul');
