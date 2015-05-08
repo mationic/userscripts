@@ -27,24 +27,28 @@
                 resultsQuery = '#results, #video_results',
                 data = "",
                 breaker,
-                s;
-            if (!$('#results_content').hasClass('loading') && pos < 50) {
-                $('#results_content').addClass('loading');
+                nr;
+            if (!$('#results_content').hasClass('trigger-block') && pos < 50) {
+                $('#results_content').addClass('trigger-block');
                 breaker = $('<div>', {
                     'class': 'breaker',
-                    'style': 'clear: both; line-height: 20px; text-align: center; margin-top: 20px; margin-bottom: 20px; border: 1px solid; opacity: 0.5; font-style: italic;',
+                    'style': 'clear: both; line-height: 21px; text-align: center; margin: 10px; border: 1px solid; opacity: 0.7; font-style: italic;',
                     'html': 'loading page <span class="nr"></span> ..'
                 });
                 breaker.css('width', $('div#first-result').width());
-                if ($("div[id*='pagenav'] .active").length) { // new design
+                if ($("div[id*='pagenav'] .active").length !== 0) {  // new design
                     resultsQuery = '#bottom-result-container';
-                    s = parseInt($("div[id*='pagenav'] .active").last().text(), 10) + 1;
+                    nr = parseInt($("div[id*='pagenav'] .active").last().text(), 10) + 1;
                     $('#pagenavigation').before(breaker);
                 } else {
-                    s = parseInt($('#pagenavigation #pnform').html().match(/.*&nbsp;(\d+)&nbsp;.*/).pop(), 10) + 1;
+                    nr = parseInt($('#pagenavigation #pnform').html().match(/.*&nbsp;(\d+)&nbsp;.*/).pop(), 10) + 1;
                     $(resultsQuery).last().append(breaker);
                 }
-                breaker.find('.nr').text(s);
+                if ($('#pagenavigation').find('a[id=' + nr + ']').length === 0) {
+                    breaker.remove();
+                    return true;
+                }
+                breaker.find('.nr').text(nr);
                 form.find("input[type=\"hidden\"]").each(function () {
                     data += "&" + $(this).attr('name') + "=" + $(this).attr('value');
                 });
@@ -58,21 +62,20 @@
                     },
                     onload: function (response) {
                         var java = "java",
-                            nav;
-                        if ($(response.responseText).find(resultsQuery).size()) {
-                            breaker.after($(response.responseText).find(resultsQuery).html());
+                            newPage = $(response.responseText);
+                        if (newPage.find(resultsQuery).size()) {
+                            breaker.after(newPage.find(resultsQuery).html());
                             breaker.css('font-style', 'normal');
                             breaker.attr('id', 'pagenav' + breaker.find('span').text());
                             $('.classified').hide();
                             $('.classified').last().show();
                             if ($('#search_footer').size()) {
-                                $('#search_footer').html($(response.responseText).find('#search_footer').html());
+                                $('#search_footer').html(newPage.find('#search_footer').html());
                                 breaker.html($('#pagenavigation').clone(true).html());
                             } else {  // new design
-                                nav = $('#pagenavigation');
-                                nav.remove();
-                                breaker.html(nav.html());
-                                $('#pagenavigation').html($(response.responseText).find('#pagenavigation').html());
+                                breaker.html($('#pagenavigation').html());
+                                $('#pagenavigation').remove();
+                                $('#pagenavigation').html(newPage.find('#pagenavigation').html());
                             }
                             breaker.find('div').css('display', 'inline');
                             breaker.find('form').each(function (i) {
@@ -83,17 +86,15 @@
                                 }
                             });
                             $('#pagenavigation div').css('display', 'inline');
-                            $('#results_content').removeClass('loading');
+                            $('#results_content').removeClass('trigger-block');
                         } else {
                             $('.breaker').last().remove();
                         }
                     },
                     onerror: function () {
-                        $('.breaker').last().remove();
-                        $('#results_content').removeClass('loading');
+                        $('.breaker').last().html('error loading next page');
                     }
                 });
-
             }
         });
     };
@@ -114,7 +115,7 @@
             }
         });
         if ($('#pagenavigation').length) {
-            if ($('.navbar-header').length) { // new design
+            if ($('.navbar-header').length) {  // new design
                 $('#head_left').before(link);
                 link.css('position', 'relative');
                 link.css('left', '640px');
