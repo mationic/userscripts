@@ -5,7 +5,7 @@
 //
 // @description    Autopager for startpage.com
 //
-// @include        /^https?://(.+\.)?startpage\.com\/?do\/(meta)?search(\.pl)?.*$/
+// @include        /^https?://(.+\.)?startpage\.com\/?do\/(meta)?search(\.pl)?(\?.*)?$/
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
@@ -21,24 +21,23 @@
     /*jslint browser:true, regexp: true, newcap:true */
     /*global $, jQuery, GM_xmlhttpRequest, GM_getValue, GM_setValue */
     var addAutoPager = function () {
-        var breaker = $('<div>', {
-            'class': 'breaker',
-            'style': 'clear: both; line-height: 20px; text-align: center; margin-top: 20px; margin-bottom: 20px; border: 1px solid; opacity: 0.5; font-style: italic;',
-            'html': 'loading page <span class="nr"></span> ..'
-        });
-        breaker.css('width', $('#results_content .result').css('width'));
         $(document).bind('scroll', function () {
             var pos = $(document).height() - $('body').scrollTop() - $('html').scrollTop() - $(window).height(),
                 form = $('#nextnavbar form'),
                 data = "",
-                br,
+                breaker,
                 s;
             if (!$('#results_content').hasClass('loading') && pos < 50) {
                 $('#results_content').addClass('loading');
-                br = breaker.clone();
+                breaker = $('<div>', {
+                    'class': 'breaker',
+                    'style': 'clear: both; line-height: 20px; text-align: center; margin-top: 20px; margin-bottom: 20px; border: 1px solid; opacity: 0.5; font-style: italic;',
+                    'html': 'loading page <span class="nr"></span> ..'
+                });
+                breaker.css('width', $('#results_content .result').css('width'));
                 s = parseInt($('#pagenavigation #pnform').html().match(/.*&nbsp;(\d+)&nbsp;.*/).pop(), 10) + 1;
-                br.find('.nr').text(s);
-                $('#results, #video_results').last().append(br);
+                breaker.find('.nr').text(s);
+                $('#results, #video_results').last().append(breaker);
 
                 form.find("input[type=\"hidden\"]").each(function () {
                     data += "&" + $(this).attr('name') + "=" + $(this).attr('value');
@@ -54,16 +53,16 @@
                     onload: function (response) {
                         var java = "java";
                         if ($(response.responseText).find('#results, #video_results').size()) {
-                            br.after($(response.responseText).find('#results, #video_results').html());
+                            breaker.after($(response.responseText).find('#results, #video_results').html());
                             $('#search_footer').html($(response.responseText).find('#search_footer').html());
                             $('.classified').hide();
                             $('.classified').last().show();
-                            br.css('font-style', 'normal');
-                            br.attr('id', 'pagenav' + br.find('span').text());
-                            br.html($('#pagenavigation').clone(true).html());
-                            br.find('div').css('display', 'inline');
-                            br.find('form').each(function (i) {
-                                $(this).attr('id', $(this).attr('name') + '_' + br.attr('id') + '_' + i);
+                            breaker.css('font-style', 'normal');
+                            breaker.attr('id', 'pagenav' + breaker.find('span').text());
+                            breaker.html($('#pagenavigation').clone(true).html());
+                            breaker.find('div').css('display', 'inline');
+                            breaker.find('form').each(function (i) {
+                                $(this).attr('id', $(this).attr('name') + '_' + breaker.attr('id') + '_' + i);
                                 $(this).attr('name', $(this).attr('id'));
                                 if ($(this).attr('name').substr(0, 6) !== "pnform") {
                                     $(this).find('a').attr("href", java + "script:document." + $(this).attr('name') + ".submit();");
