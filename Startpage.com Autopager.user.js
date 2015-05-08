@@ -5,7 +5,7 @@
 //
 // @description    Autopager for startpage.com
 //
-// @include        /^https?://(.+\.)?startpage\.com\/?do\/(meta)?search.*$/
+// @include        /^https?://(.+\.)?startpage\.com\/?do\/(meta)?search(\.pl)?.*$/
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
@@ -13,7 +13,7 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 //
-// @version        0.0.4
+// @version        0.0.5
 // ==/UserScript==
 
 (function ($) {
@@ -23,21 +23,21 @@
     var addAutoPager = function () {
         var breaker = $('<div>', {
             'class': 'breaker',
-            'style': 'clear: both; line-height: 20px; text-align: center; margin-top: 20px; margin-bottom: 20px; background: rgb(230, 230, 230); font-style: italic;',
-            'html': 'loading page <span class="nr" style="margin-left: 10px;">Loading page </span>'
+            'style': 'clear: both; line-height: 20px; text-align: center; margin-top: 20px; margin-bottom: 20px; border: 1px solid; opacity: 0.5; font-style: italic;',
+            'html': 'loading page <span class="nr"></span> ..'
         });
         breaker.css('width', $('#results_content .result').css('width'));
         $(document).bind('scroll', function () {
-            var pos = $('#results_content').height() - $('#footer').height() - $('#head').height() - $('#results_header').height() - $('html,body').scrollTop(),
+            var pos = $(document).height() - $('body').scrollTop() - $('html').scrollTop() - $(window).height(),
                 form = $('#nextnavbar form'),
                 data = "",
                 br,
                 s;
-            if (!$('#results_content').hasClass('loading') && pos < 400) {
+            if (!$('#results_content').hasClass('loading') && pos < 50) {
                 $('#results_content').addClass('loading');
                 br = breaker.clone();
-                s = parseInt($('#pnform').html().match(/.*&nbsp;(\d+)&nbsp;.*/).pop(), 10) + 1;
-                br.find('.nr').html('- ' + s + ' -');
+                s = parseInt($('#pagenavigation #pnform').html().match(/.*&nbsp;(\d+)&nbsp;.*/).pop(), 10) + 1;
+                br.find('.nr').text(s);
                 $('#results, #video_results').last().append(br);
 
                 form.find("input[type=\"hidden\"]").each(function () {
@@ -52,16 +52,28 @@
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
                     onload: function (response) {
+                        var java = "java";
                         if ($(response.responseText).find('#results, #video_results').size()) {
-                            $('.classified').hide();
                             br.after($(response.responseText).find('#results, #video_results').html());
-                            br.css('font-style', 'normal');
-                            br.html('Page ' + br.find('.nr').html());
                             $('#search_footer').html($(response.responseText).find('#search_footer').html());
+                            $('.classified').hide();
+                            $('.classified').last().show();
+                            br.css('font-style', 'normal');
+                            br.attr('id', 'pagenav' + br.find('span').text());
+                            br.html($('#pagenavigation').clone(true).html());
+                            br.find('div').css('display', 'inline');
+                            br.find('form').each(function (i) {
+                                $(this).attr('id', $(this).attr('name') + '_' + br.attr('id') + '_' + i);
+                                $(this).attr('name', $(this).attr('id'));
+                                if ($(this).attr('name').substr(0, 6) !== "pnform") {
+                                    $(this).find('a').attr("href", java + "script:document." + $(this).attr('name') + ".submit();");
+                                }
+                            });
+                            $('#pagenavigation div').css('display', 'inline');
+                            $('#results_content').removeClass('loading');
                         } else {
                             $('.breaker').last().remove();
                         }
-                        $('#results_content').removeClass('loading');
                     },
                     onerror: function () {
                         $('.breaker').last().remove();
@@ -73,30 +85,23 @@
         });
     };
     $(function () {
-        var link = $('<div>', {
+        var link = $('<a>', {
             'class': 'autopager',
-            'style': 'color:#608BD6;cursor:pointer;margin-top: 10px;font-weight:bold;text-align:center;',
+            'style': 'cursor:pointer;font-weight:normal;text-align:left;',
             'html': 'Autopager <span style="color:#D5402C;">off</span>'
         }).click(function () {
-            if ($(this).hasClass('isOn')) {
-                $(this).removeClass('isOn');
+            if ($(this).find('span').text() === 'on') {
                 $(this).find('span').text('off');
                 GM_setValue('SP-Autopager', false);
                 $(document).unbind('scroll');
             } else {
-                $(this).addClass('isOn');
                 $(this).find('span').text('on');
                 GM_setValue('SP-Autopager', true);
                 addAutoPager();
             }
         });
-        if ($('#results, #video_results').hasClass('no_side_bar')) {
-            $('#results_header').append(link);
-        } else {
-            $('#side_bar').prepend(link);
-        }
+        $('#head_left').parent().append(link);
         if (GM_getValue('SP-Autopager', false)) {
-            link.addClass('isOn');
             link.find('span').text('on');
             addAutoPager();
         }
