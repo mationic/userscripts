@@ -13,7 +13,7 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 //
-// @version        0.0.5
+// @version        0.0.6
 // ==/UserScript==
 
 (function ($) {
@@ -24,6 +24,7 @@
         $(document).bind('scroll', function () {
             var pos = $(document).height() - $('body').scrollTop() - $('html').scrollTop() - $(window).height(),
                 form = $('#nextnavbar form'),
+                resultsQuery = '#results, #video_results',
                 data = "",
                 breaker,
                 s;
@@ -34,11 +35,16 @@
                     'style': 'clear: both; line-height: 20px; text-align: center; margin-top: 20px; margin-bottom: 20px; border: 1px solid; opacity: 0.5; font-style: italic;',
                     'html': 'loading page <span class="nr"></span> ..'
                 });
-                breaker.css('width', $('#results_content .result').css('width'));
-                s = parseInt($('#pagenavigation #pnform').html().match(/.*&nbsp;(\d+)&nbsp;.*/).pop(), 10) + 1;
+                breaker.css('width', $('div#first-result').width());
+                if ($("div[id*='pagenav'] .active").size()) {
+                    resultsQuery = '#bottom-result-container';
+                    s = parseInt($("div[id*='pagenav'] .active").last().text(), 10) + 1;
+                    $('#pagenavigation').before(breaker);
+                } else {
+                    s = parseInt($('#pagenavigation #pnform').html().match(/.*&nbsp;(\d+)&nbsp;.*/).pop(), 10) + 1;
+                    $(resultsQuery).last().append(breaker);
+                }
                 breaker.find('.nr').text(s);
-                $('#results, #video_results').last().append(breaker);
-
                 form.find("input[type=\"hidden\"]").each(function () {
                     data += "&" + $(this).attr('name') + "=" + $(this).attr('value');
                 });
@@ -51,15 +57,23 @@
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
                     onload: function (response) {
-                        var java = "java";
-                        if ($(response.responseText).find('#results, #video_results').size()) {
-                            breaker.after($(response.responseText).find('#results, #video_results').html());
-                            $('#search_footer').html($(response.responseText).find('#search_footer').html());
-                            $('.classified').hide();
-                            $('.classified').last().show();
+                        var java = "java",
+                            nav;
+                        if ($(response.responseText).find(resultsQuery).size()) {
+                            breaker.after($(response.responseText).find(resultsQuery).html());
                             breaker.css('font-style', 'normal');
                             breaker.attr('id', 'pagenav' + breaker.find('span').text());
-                            breaker.html($('#pagenavigation').clone(true).html());
+                            $('.classified').hide();
+                            $('.classified').last().show();
+                            if ($('#search_footer').size()) {
+                                $('#search_footer').html($(response.responseText).find('#search_footer').html());
+                                breaker.html($('#pagenavigation').clone(true).html());
+                            } else {
+                                nav = $('#pagenavigation');
+                                nav.remove();
+                                breaker.html(nav.html());
+                                $('#pagenavigation').html($(response.responseText).find('#pagenavigation').html());
+                            }
                             breaker.find('div').css('display', 'inline');
                             breaker.find('form').each(function (i) {
                                 $(this).attr('id', $(this).attr('name') + '_' + breaker.attr('id') + '_' + i);
@@ -99,7 +113,15 @@
                 addAutoPager();
             }
         });
-        $('#head_left').parent().append(link);
+        if ($('.navbar-header').length) {
+            $('#head_left').before(link);
+            //$('#wrapper').prepend(link);
+            link.css('position', 'relative');
+            link.css('left', '640px');
+            link.css('top', '63px');
+        } else {
+            $('#head_left').parent().append(link);
+        }
         if (GM_getValue('SP-Autopager', false)) {
             link.find('span').text('on');
             addAutoPager();
