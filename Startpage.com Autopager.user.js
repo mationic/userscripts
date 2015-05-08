@@ -5,7 +5,7 @@
 //
 // @description    Autopager for startpage.com
 //
-// @include        /^https?://(.+\.)?startpage\.com\/?do\/(meta)?search(\.pl)?.*$/
+// @include        /^https?://(.+\.)?startpage\.com\/do\/.*$/
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
@@ -13,7 +13,7 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 //
-// @version        0.0.7
+// @version        0.0.8
 // ==/UserScript==
 
 (function ($) {
@@ -44,7 +44,7 @@
                     nr = parseInt($('#pagenavigation #pnform').html().match(/.*&nbsp;(\d+)&nbsp;.*/).pop(), 10) + 1;
                     $(resultsQuery).last().append(breaker);
                 }
-                if ($('#pagenavigation').find('a[id=' + nr + ']').length === 0) {
+                if (nr === 1 || $('#pagenavigation').find('a[id=' + nr + ']').length === 0) {
                     breaker.remove();
                     return true;
                 }
@@ -62,31 +62,44 @@
                     },
                     onload: function (response) {
                         var java = "java",
-                            newPage = $(response.responseText);
-                        if (newPage.find(resultsQuery).size()) {
+                            newPage = $(response.responseText),
+                            isLastPage = (newPage.find("form[name='nextform']").length === 0);
+                        if (newPage.find(resultsQuery).length !== 0) {
                             breaker.after(newPage.find(resultsQuery).html());
                             breaker.css('font-style', 'normal');
                             breaker.attr('id', 'pagenav' + breaker.find('span').text());
                             $('.classified').hide();
                             $('.classified').last().show();
-                            if ($('#search_footer').size()) {
-                                $('#search_footer').html(newPage.find('#search_footer').html());
-                                breaker.html($('#pagenavigation').clone(true).html());
-                            } else {  // new design
-                                breaker.html($('#pagenavigation').html());
-                                $('#pagenavigation').remove();
-                                $('#pagenavigation').html(newPage.find('#pagenavigation').html());
-                            }
-                            breaker.find('div').css('display', 'inline');
-                            breaker.find('form').each(function (i) {
-                                $(this).attr('id', $(this).attr('name') + '_' + breaker.attr('id') + '_' + i);
-                                $(this).attr('name', $(this).attr('id'));
-                                if ($(this).attr('name').substr(0, 6) !== "pnform") {
-                                    $(this).find('a').attr("href", java + "script:document." + $(this).attr('name') + ".submit();");
+                            if (!isLastPage) {
+                                if ($('#search_footer').size()) {
+                                    $('#search_footer').html(newPage.find('#search_footer').clone(true).html());
+                                    breaker.html($('#pagenavigation').clone(true).html());
+                                    $('#search_footer').find('#bottom_input_p').hide().next().hide(); //remove unusable search form at bottom
+                                    $('#search_footer table').width($('div#first-result').width());
+                                } else {  // new design
+                                    breaker.html($('#pagenavigation').html());
+                                    $('#pagenavigation').remove();
+                                    $('#pagenavigation').html(newPage.find('#pagenavigation').html());
                                 }
-                            });
-                            $('#pagenavigation div').css('display', 'inline');
-                            $('#results_content').removeClass('trigger-block');
+                                breaker.find('div').css('display', 'inline');
+                                breaker.find('form').each(function (i) {
+                                    $(this).attr('id', $(this).attr('name') + '_' + breaker.attr('id') + '_' + i);
+                                    $(this).attr('name', $(this).attr('id'));
+                                    if ($(this).attr('name').substr(0, 6) !== "pnform") {
+                                        $(this).find('a').attr("href", java + "script:document." + $(this).attr('name') + ".submit();");
+                                    }
+                                });
+                                $('#pagenavigation div').css('display', 'inline');
+                                $('#results_content').removeClass('trigger-block');
+                            } else {
+                                $('.breaker').last().remove();
+                                $('#pagenavigation #jumpsbar a').each(function () {
+                                    if (parseInt($(this).attr('id'), 10) >= nr) {
+                                        $(this).remove();
+                                    }
+                                });
+                                $('#pagenavigation #nextnavbar').remove();
+                            }
                         } else {
                             $('.breaker').last().remove();
                         }
