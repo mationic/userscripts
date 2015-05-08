@@ -13,7 +13,7 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 //
-// @version        0.0.6
+// @version        0.0.7
 // ==/UserScript==
 
 (function ($) {
@@ -36,8 +36,8 @@
                     'html': 'loading page <span class="nr"></span> ..'
                 });
                 breaker.css('width', $('div#first-result').width());
-                if ($("div[id*='pagenav'] .active").size()) {
-                    resultsQuery = '#bottom-result-container';
+                if ($("div[id*='pagenav'] .active").length) {
+                    resultsQuery = '#bottom-result-container'; //, #pics-multimedia-div, #video-multimedia-div';
                     s = parseInt($("div[id*='pagenav'] .active").last().text(), 10) + 1;
                     $('#pagenavigation').before(breaker);
                 } else {
@@ -113,18 +113,19 @@
                 addAutoPager();
             }
         });
-        if ($('.navbar-header').length) {
-            $('#head_left').before(link);
-            //$('#wrapper').prepend(link);
-            link.css('position', 'relative');
-            link.css('left', '640px');
-            link.css('top', '63px');
-        } else {
-            $('#head_left').parent().append(link);
-        }
-        if (GM_getValue('SP-Autopager', false)) {
-            link.find('span').text('on');
-            addAutoPager();
+        if ($('#pagenavigation').length) {
+            if ($('.navbar-header').length) {
+                $('#head_left').before(link);
+                link.css('position', 'relative');
+                link.css('left', '640px');
+                link.css('top', '63px');
+            } else {
+                $('#head_left').parent().append(link);
+            }
+            if (GM_getValue('SP-Autopager', false)) {
+                link.find('span').text('on');
+                addAutoPager();
+            }
         }
     });
 }(jQuery));
