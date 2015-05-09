@@ -13,7 +13,7 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 //
-// @version        0.1.0
+// @version        0.1.1
 // ==/UserScript==
 
 (function ($) {
@@ -36,7 +36,7 @@
                     'html': 'loading page <span class="nr"></span> ..'
                 });
                 breaker.css('width', $('div#first-result').width());
-                if ($("div[id*='pagenav'] .active").length !== 0) {  // new design
+                if ($("div[id*='pagenav'] .active").length !== 0) { // new design
                     resultsQuery = '#bottom-result-container';
                     nr = parseInt($("div[id*='pagenav'] .active").last().text(), 10) + 1;
                     $('#pagenavigation').before(breaker);
@@ -49,6 +49,7 @@
                     return true;
                 }
                 breaker.find('.nr').text(nr);
+                breaker.data('ipage', nr);
                 form.find("input[type=\"hidden\"]").each(function () {
                     data += "&" + $(this).attr('name') + "=" + $(this).attr('value');
                 });
@@ -61,11 +62,25 @@
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
                     onload: function (response) {
-                        var java = "java",
+                        var clickWrapper = function () {
+                                var obj = $('#pagenav' + $(this).attr('id')),
+                                    startat;
+                                if (obj.size() > 0) {
+                                    $(document).scrollTop(obj.offset().top);
+                                } else {
+                                    startat = $(this).attr('onclick').match(/\((\d+)\)/).pop();
+                                    obj = $('form[name=pnform]').last();
+                                    obj.find('#startat').attr('value', startat);
+                                    obj.submit();
+                                }
+                                return false;
+                            },
                             newPage = $(response.responseText),
                             isEmpty = (newPage.find(resultsQuery).length === 0),
                             isLastPage = (newPage.find("form[name='nextform']").length === 0);
-                        if (isEmpty) { return; }
+                        if (isEmpty) {
+                            return;
+                        }
                         breaker.after(newPage.find(resultsQuery).html());
                         breaker.css('font-style', 'normal');
                         breaker.attr('id', 'pagenav' + breaker.find('span').text());
@@ -75,19 +90,20 @@
                             if ($('#search_footer').size()) {
                                 $('#pagenavigation').html(newPage.find('#pagenavigation').html());
                                 breaker.html($('#pagenavigation').clone(true).html());
-                            } else {  // new design
+                            } else { // new design
                                 breaker.html($('#pagenavigation').html());
                                 $('#pagenavigation').remove();
                                 $('#pagenavigation').html(newPage.find('#pagenavigation').html());
                             }
+
+                            $('#pagenavigation #nextnavbar a').attr('id', breaker.data('ipage') + 1);
+                            $('#pagenavigation #prevnavbar a').attr('id', breaker.data('ipage') - 1);
+                            breaker.find('#nextnavbar a').attr('id', breaker.data('ipage') + 1);
+                            breaker.find('#prevnavbar a').attr('id', breaker.data('ipage') - 1);
+                            $('#pagenavigation #prevnavbar a').click(clickWrapper);
+                            breaker.find('a').click(clickWrapper);
+
                             breaker.find('div').css('display', 'inline');
-                            breaker.find('form').each(function (i) {
-                                $(this).attr('id', $(this).attr('name') + '_' + breaker.attr('id') + '_' + i);
-                                $(this).attr('name', $(this).attr('id'));
-                                if ($(this).attr('name').substr(0, 6) !== "pnform") {
-                                    $(this).find('a').attr("href", java + "script:document." + $(this).attr('name') + ".submit();");
-                                }
-                            });
                             $('#pagenavigation div').css('display', 'inline');
                             $('#results_content').removeClass('trigger-block');
                         } else {
@@ -124,7 +140,7 @@
             }
         });
         if ($('#pagenavigation').length) {
-            if ($('.navbar-header').length) {  // new design
+            if ($('.navbar-header').length) { // new design
                 $('#head_left').before(link);
                 link.css('position', 'relative');
                 link.css('left', '640px');
