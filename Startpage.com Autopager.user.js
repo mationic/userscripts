@@ -5,7 +5,7 @@
 //
 // @description    Autopager for startpage.com
 //
-// @include        /^https?://(.+\.)?startpage\.com\/do\/.*$/
+// @include        /^https?:\/\/(.+\.)?startpage\.com\/do\/.*$/
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
@@ -13,12 +13,12 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 //
-// @version        0.0.8
+// @version        0.1.0
 // ==/UserScript==
 
 (function ($) {
-    "use strict";
-    /*jslint browser:true, regexp: true, newcap:true */
+    'use strict';
+    /*jslint browser: true, regexp: true, newcap: true */
     /*global $, jQuery, GM_xmlhttpRequest, GM_getValue, GM_setValue */
     var addAutoPager = function () {
         $(document).bind('scroll', function () {
@@ -44,7 +44,7 @@
                     nr = parseInt($('#pagenavigation #pnform').html().match(/.*&nbsp;(\d+)&nbsp;.*/).pop(), 10) + 1;
                     $(resultsQuery).last().append(breaker);
                 }
-                if (nr === 1 || $('#pagenavigation').find('a[id=' + nr + ']').length === 0) {
+                if (isNaN(nr) || $('#pagenavigation').find('a[id=' + nr + ']').length === 0) {
                     breaker.remove();
                     return true;
                 }
@@ -63,49 +63,45 @@
                     onload: function (response) {
                         var java = "java",
                             newPage = $(response.responseText),
+                            isEmpty = (newPage.find(resultsQuery).length === 0),
                             isLastPage = (newPage.find("form[name='nextform']").length === 0);
-                        if (newPage.find(resultsQuery).length !== 0) {
-                            breaker.after(newPage.find(resultsQuery).html());
-                            breaker.css('font-style', 'normal');
-                            breaker.attr('id', 'pagenav' + breaker.find('span').text());
-                            $('.classified').hide();
-                            $('.classified').last().show();
-                            if (!isLastPage) {
-                                if ($('#search_footer').size()) {
-                                    $('#search_footer').html(newPage.find('#search_footer').clone(true).html());
-                                    breaker.html($('#pagenavigation').clone(true).html());
-                                    $('#search_footer').find('#bottom_input_p').hide().next().hide(); //remove unusable search form at bottom
-                                    $('#search_footer table').width($('div#first-result').width());
-                                } else {  // new design
-                                    breaker.html($('#pagenavigation').html());
-                                    $('#pagenavigation').remove();
-                                    $('#pagenavigation').html(newPage.find('#pagenavigation').html());
-                                }
-                                breaker.find('div').css('display', 'inline');
-                                breaker.find('form').each(function (i) {
-                                    $(this).attr('id', $(this).attr('name') + '_' + breaker.attr('id') + '_' + i);
-                                    $(this).attr('name', $(this).attr('id'));
-                                    if ($(this).attr('name').substr(0, 6) !== "pnform") {
-                                        $(this).find('a').attr("href", java + "script:document." + $(this).attr('name') + ".submit();");
-                                    }
-                                });
-                                $('#pagenavigation div').css('display', 'inline');
-                                $('#results_content').removeClass('trigger-block');
-                            } else {
-                                $('.breaker').last().remove();
-                                $('#pagenavigation #jumpsbar a').each(function () {
-                                    if (parseInt($(this).attr('id'), 10) >= nr) {
-                                        $(this).remove();
-                                    }
-                                });
-                                $('#pagenavigation #nextnavbar').remove();
+                        if (isEmpty) { return; }
+                        breaker.after(newPage.find(resultsQuery).html());
+                        breaker.css('font-style', 'normal');
+                        breaker.attr('id', 'pagenav' + breaker.find('span').text());
+                        $('.classified').hide();
+                        $('.classified').last().show();
+                        if (!isLastPage) {
+                            if ($('#search_footer').size()) {
+                                $('#pagenavigation').html(newPage.find('#pagenavigation').html());
+                                breaker.html($('#pagenavigation').clone(true).html());
+                            } else {  // new design
+                                breaker.html($('#pagenavigation').html());
+                                $('#pagenavigation').remove();
+                                $('#pagenavigation').html(newPage.find('#pagenavigation').html());
                             }
+                            breaker.find('div').css('display', 'inline');
+                            breaker.find('form').each(function (i) {
+                                $(this).attr('id', $(this).attr('name') + '_' + breaker.attr('id') + '_' + i);
+                                $(this).attr('name', $(this).attr('id'));
+                                if ($(this).attr('name').substr(0, 6) !== "pnform") {
+                                    $(this).find('a').attr("href", java + "script:document." + $(this).attr('name') + ".submit();");
+                                }
+                            });
+                            $('#pagenavigation div').css('display', 'inline');
+                            $('#results_content').removeClass('trigger-block');
                         } else {
-                            $('.breaker').last().remove();
+                            breaker.remove();
+                            $('#pagenavigation #jumpsbar a').each(function () {
+                                if (parseInt($(this).attr('id'), 10) >= nr) {
+                                    $(this).remove();
+                                }
+                            });
+                            $('#pagenavigation #nextnavbar').remove();
                         }
                     },
                     onerror: function () {
-                        $('.breaker').last().html('error loading next page');
+                        $('.breaker').last().html('loading failed');
                     }
                 });
             }
