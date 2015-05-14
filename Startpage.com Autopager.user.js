@@ -13,7 +13,7 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 //
-// @version        0.1.2
+// @version        0.1.3
 // ==/UserScript==
 
 (function ($) {
@@ -61,9 +61,9 @@
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
                 onload: function (response) {
-                    var clickWrapper = function () {
-                            var obj = $('#pagenav' + $(this).attr('id')),
-                                startat;
+                    var startat,
+                        clickWrapper = function () {
+                            var obj = $('#pagenav' + $(this).attr('id'));
                             if (obj.size() > 0) {
                                 $(document).scrollTop(obj.offset().top);
                             } else {
@@ -96,10 +96,16 @@
                         }
 
                         $('#pagenavigation #nextnavbar a').attr('id', breaker.data('ipage') + 1);
-                        $('#pagenavigation #prevnavbar a').attr('id', breaker.data('ipage') - 1);
                         breaker.find('#nextnavbar a').attr('id', breaker.data('ipage') + 1);
+                        startat = $('#pagenavigation #nextnavbar input[name="startat"]').attr('value');
+                        $('#pagenavigation #nextnavbar a').attr('onclick', 'mysubmit(' + startat  + '); return false;');
+                        breaker.find('#nextnavbar a').attr('onclick', 'mysubmit(' + startat + '); return false;');
+                        $('#pagenavigation #prevnavbar a').attr('id', breaker.data('ipage') - 1);
                         breaker.find('#prevnavbar a').attr('id', breaker.data('ipage') - 1);
-                        $('#pagenavigation #prevnavbar a').click(clickWrapper);
+                        startat = $('#pagenavigation #prevnavbar input[name="startat"]').attr('value');
+                        $('#pagenavigation #prevnavbar a').attr('onclick', 'mysubmit(' + startat + '); return false;');
+                        breaker.find('#prevnavbar a').attr('onclick', 'mysubmit(' + startat + '); return false;');
+                        $('#pagenavigation a').click(clickWrapper);
                         breaker.find('a').click(clickWrapper);
 
                         breaker.find('div').css('display', 'inline');
