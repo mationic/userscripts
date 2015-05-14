@@ -13,7 +13,7 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 //
-// @version        0.1.3
+// @version        0.1.4
 // ==/UserScript==
 
 (function ($) {
@@ -110,6 +110,7 @@
 
                         breaker.find('div').css('display', 'inline');
                         $('#pagenavigation div').css('display', 'inline');
+                        if ($('#pagenavigation').width() > $('div#first-result').width()) { breaker.css('width', $('#pagenavigation').width()); }
                         $('#results_content').removeClass('trigger-block');
                     } else {
                         breaker.remove();
