@@ -7,5 +7,4 @@ Working with POST requests for maximum privacy.
 Current versions are stable for Chrome / Tampermonkey.
 Greasemonkey had problems with GM_xmlhttpRequests sometimes in my tests.
 
-New Design is supported. I recommend using a [userstyle](https://userstyles.org/styles/93995/sgl-2-0) to
-enabling google look.
+New Design is supported. I recommend using a [userstyle](https://userstyles.org/styles/93995/sgl-2-0) to enable google look.
