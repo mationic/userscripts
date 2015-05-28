@@ -7,7 +7,7 @@
 // @exclude        /^https?://(.+\.)?reddit\.com/.+/comments/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.94
+// @version        1.95
 // ==/UserScript==
 (function () {
     'use strict';
@@ -39,7 +39,7 @@
                 articleID,
                 parent,
                 tmp = 'java',
-                a = document.querySelectorAll('.linklisting .comments:not(.empty)');
+                a = document.querySelectorAll('.linklisting .thing:not(.NERdupe) .comments:not(.empty)');
             for (i = 0; i < a.length; i += 1) {
                 if (!a[i].parentNode.parentNode.querySelector('.toplink') && /[0-9]/.test(a[i])) {
                     articleID = a[i].getAttribute('href');
