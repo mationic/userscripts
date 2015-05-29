@@ -175,7 +175,7 @@
             sheet += 'div[id^=preview] .ulink,div[id^=preview] .md a{font-weight:bold;color:#369!important;}';
             sheet += '.aubox a.disabled {color: #995F5F;font-weight: normal;}';
             sheet += '.aubox a.enabled {color: #009D2D;font-weight: normal;}';
-            sheet += 'a.sideswitch {cursor:pointer;}';
+            sheet += 'a#sidebarswitch {cursor:pointer;}';
             sheet += '.listing-page .buttons li{vertical-align:top;}.toplink{color:orangered!important;text-decoration:none;}';
             sheet += '.permalink { float: right; color: #666;}.points{color:#333;font-weight:bold;margin-left:.5em;}';
             sheet += '.res-nightmode div[id^=preview] .ulink,.res-nightmode div[id^=preview] .md a{color: rgb(20, 150, 220)!important;}';
@@ -202,15 +202,13 @@
                     status = 'show';
                     helper.toggleView('.side');
                 }
-                sidebar.innerHTML = '<a class="sideswitch">' + status + ' sidebar</a>';
+                sidebar.innerHTML = '<a id="sidebarswitch">' + status + ' sidebar</a>';
                 sidebar.addEventListener('click', function () {
                     status = 'hide';
                     helper.toggleView('.side');
                     GM_setValue('sideBarToggle', !GM_getValue('sideBarToggle', true));
-                    if (GM_getValue('sideBarToggle')) {
-                        status = 'show';
-                    }
-                    document.querySelector('.sideswitch').innerHTML = status + ' sidebar';
+                    if (GM_getValue('sideBarToggle')) { status = 'show'; }
+                    document.querySelector('#sidebarswitch').innerHTML = status + ' sidebar';
                 });
                 document.querySelector('.tabmenu').appendChild(sidebar);
             } else {
@@ -244,7 +242,6 @@
                 });
                 loadbar.appendChild(spanComments);
                 document.querySelector('.tabmenu').appendChild(loadbar);
-
             } else {
                 GM_setValue('autoExpandImages', false);
                 GM_setValue('autoLoadComments', false);
