@@ -1,14 +1,19 @@
 // ==UserScript==
 // @name           Reddit - Top Comments Preview
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
-// @author         Erik Wannebo, gavin19, jesuis-parapluie
-// @description    Preview to the top comments on Reddit (optional: autoload comments, autoload images, autohide sidebar)
-// @include        /^https?:\/\/(.+\.)?reddit\.com\/?.*$\/
+// @author         jesuis-parapluie, Erik Wannebo, gavin19
+// @version        2.00
+// @description    Preview to the top comments on Reddit (+ optional: autoload comments, autoload images, autohide sidebar)
+// @homepage       https://github.com/mationic/userscripts/blob/master/Reddit%20-%20Top%20Comments%20Preview.readme.md
+// @updateURL      https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
+// @downloadURL    https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
+// @include        /^https?:\/\/(.+\.)?reddit\.com\/?.*$/
 // @exclude        /^https?:\/\/(.+\.)?reddit\.com\/.+\/comments\/.*$/
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @version        1.96
 // ==/UserScript==
+
+
 (function () {
     'use strict';
     /*jslint browser:true, newcap:true */
@@ -112,22 +117,28 @@
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.onreadystatechange = function () {
                     var retries = 0;
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        onloadJSON(xhr);
-                    } else if (xhr.readyState === 4 && (xhr.status === 500 || xhr.status === 501 || xhr.status === 503 || xhr.status === 504)) {
-                        if (ele.hasAttribute('data-retries')) {
-                            retries = parseInt(ele.getAttribute('data-retries'), 10);
-                        }
-                        ele.setAttribute('data-retries', retries + 1);
-                        if (retries > 5) {
-                            comments.classList.remove('loading');
-                            comments.classList.add('loaderror');
-                            ele.setAttribute('data-retries', 0);
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            onloadJSON(xhr);
                         } else {
-                            setTimeout(retrieveTopComments(ele, articleID), 2000);
+                            if (ele.hasAttribute('data-retries')) {
+                                retries = parseInt(ele.getAttribute('data-retries'), 10);
+                            }
+                            ele.setAttribute('data-retries', retries + 1);
+                            if (retries > 5) {
+                                comments.classList.remove('loading');
+                                comments.classList.add('loaderror');
+                                ele.setAttribute('data-retries', 0);
+                            } else {
+                                setTimeout(retrieveTopComments(ele, articleID), 2000);
+                            }
                         }
-
                     }
+                };
+                xhr.onerror = function () {
+                    comments.classList.remove('loading');
+                    comments.classList.add('loaderror');
+                    ele.setAttribute('data-retries', 0);
                 };
                 xhr.send(null);
             } else {
@@ -167,25 +178,21 @@
         },
         addStyle = function () {
             var style = document.createElement('style'),
-                sheet = '';
-            sheet += 'div[id^=preview]{box-sizing:border-box;-moz-box-sizing:border-box;background:#fff;border-radius:5px;border:1px solid #dbdbdb;white-space:normal;padding:5px;display:inline-block;margin:8px 0;}';
-            sheet += '.loaderror:before{content:" loading failed ";color:red;}div[id^=preview] .md,.res-nightmode .loaderror:before{content:" loading failed ";color:#E63A3A;}div[id^=preview] .md,.loading:before{content:"Loading...";}div[id^=preview] .md{border:1px solid #ddd;background:#f0f0f0;box-sizing:border-box;-moz-box-sizing:border-box;margin:3px 0;box-sizing:border-box;padding:2px 8px;};';
-            sheet += 'div[id^=preview] .md *{white-space:normal;}div[id^=preview] .md code{white-space:pre;}';
-            sheet += 'div[id^=preview] .md pre{overflow:visible}div[id^=preview]>*{font-size: small;}';
-            sheet += 'div[id^=preview] .ulink,div[id^=preview] .md a{font-weight:bold;color:#369!important;}';
-            sheet += '.aubox a.disabled {color: #995F5F;font-weight: normal;}';
-            sheet += '.aubox a.enabled {color: #009D2D;font-weight: normal;}';
-            sheet += 'a#sidebarswitch {cursor:pointer;}';
-            sheet += '.listing-page .buttons li{vertical-align:top;}.toplink{color:orangered!important;text-decoration:none;}';
-            sheet += '.permalink { float: right; color: #666;}.points{color:#333;font-weight:bold;margin-left:.5em;}';
-            sheet += '.res-nightmode div[id^=preview] .ulink,.res-nightmode div[id^=preview] .md a{color: rgb(20, 150, 220)!important;}';
-            sheet += '.res-nightmode div[id^=preview]{ background: #333!important;border-color:#666!important}';
-            sheet += '.res-nightmode .toplink{color: #eee!important;}';
-            sheet += '.res-nightmode div[id^=preview] .points{color: #ddd!important;}';
-            sheet += '.res-nightmode div[id^=preview] .permalink{color: #ccc!important;}';
-            sheet += '.res-nightmode div[id^=preview] .md{background:#555!important;border-color: #222!important;}';
-            sheet += '.res-nightmode div[id^=preview] .md blockquote{color:#8C8C8C!important;}';
-            sheet += '.res-nightmode div[id^=preview] hr{border-color:#777!important;}';
+                sheet = [
+                    ".aubox a.disabled{color:#995F5F;font-weight:400} .aubox a.enabled{color:#009D2D;font-weight:400} a#sidebarswitch{cursor:pointer}",
+                    "div[id^=preview]{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;background:#fff;border-radius:5px;border:1px solid #dbdbdb;white-space:normal;padding:5px;display:inline-block;margin:8px 0}",
+                    "div[id^=preview] .md{border:1px solid #ddd;background:#f0f0f0;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;margin:3px 0;box-sizing:border-box;padding:2px 8px}",
+                    ".loaderror:before{content:\" loading failed \";color:red} .loading:before{content:\"Loading...\"} .res-nightmode .loaderror:before{content:\" loading failed \";color:#E63A3A}",
+                    "div[id^=preview] .md *{white-space:normal} div[id^=preview] .md code{white-space:pre} div[id^=preview] .md pre{overflow:visible} div[id^=preview]>*{font-size:small}",
+                    "div[id^=preview] .ulink,div[id^=preview] .md a{font-weight:700;color:#369!important} .listing-page .buttons li{vertical-align:top} .toplink{color:#FF4500!important;text-decoration:none}",
+                    ".permalink{float:right;color:#666} .points{color:#333;font-weight:700;margin-left:.5em}",
+                    ".res-nightmode div[id^=preview] pre,.res-nightmode div[id^=preview] code,.res-nightmode .link .md pre{border:1px solid #222!important;background:#282828!important;background-color:#282828!important}",
+                    ".res-nightmode div[id^=preview] .ulink,.res-nightmode div[id^=preview] .md a{color:#1496dc!important} .res-nightmode div[id^=preview]{background:#333!important;border-color:#666!important}",
+                    ".res-nightmode div[id^=preview] .md{background:#555!important;border-color:#222!important} .res-nightmode .toplink{color:#eee!important}",
+                    ".res-nightmode div[id^=preview] .points{color:#ddd!important} .res-nightmode div[id^=preview] .permalink{color:#ccc!important}",
+                    ".res-nightmode div[id^=preview] .md blockquote{color:#8C8C8C!important} .res-nightmode div[id^=preview] hr{border-color:#777!important};}",
+                    ".res-nightmode div[id^=preview] hr{border-color:#777!important;}"
+                ].join("");
             style.type = 'text/css';
             style.textContent = sheet;
             document.querySelector('head').appendChild(style);

@@ -1,28 +1,40 @@
+### Reddit - Top Comments Preview ###
 
+Updated script based on the comments preview script from userscripts.org.
 
-Original script from userscripts.org with following updates:
- - added https
- - adjusted color scheme for nightmode
- - added optional keyboard shortcut 't' for RES
- - option for auto expand all images in RES
- - retries to fetch comments if Reddit doesn't respond
- - option for auto loading all comments
- - option for hiding the sidebar
- - menu buttons for settings
+Features:
+
+ - working with https and RES never ending reddit
+ - colorschemes for normal and RES nightly mode in (thanks to gavin19)
+ - Option for auto-expanding images
+ - Option for for autoloading all comments
+ - Automatically retries to add comments if request fails
+ - Option for automatically hide side bar / toggle visibility
+ - Shortcut 't' to show/hide comments in RES
  - comments added at bottom of entry
+ - Shows loaded comments always below added entries.
+   (Behaviour can be changed in settings.)
 
 
---
-*v1.80*
-
-I finally added a storing option for the settings.
-There are two new menu buttons, one to hide/show the sidebar, one for autoloading the comments and images. The script is tested on Chrome and Firefox. Please contact me if you encounter any problems.
-
-If you don't care about the new features and just want the normal comment preview, you can disable the new menu buttons in the options part of the script. There is also an option to change the comment sorting now.
+If you don't care about the new features and just want the old comment preview, you can disable the features in the options part of the script.
+There is also an option to change the comment sorting for the preview.
 
 
---
-*v1.86*
+-------
+
+**v2.00**
+
+ 
+- Added limit for comment requests repetition
+- Adjusted nightmode for code and pre blocks, revised css code.
+- Ignoring entries marked as RES duplicate
+- Refactored and cleaned up code
+
+Since I'm not planning to add more features, v2 updates will be most likely limited to bugfixes/perfomance.
+
+----------
+
+**v1.86**
 
 When autoloading, comments will now be added the bottom of each entry.
 Comments added by clicking will still be added to the top.
@@ -30,5 +42,9 @@ Comments added by clicking will still be added to the top.
 You can change the position of the comments in the options of the script.
 
 
-Please note that the comment autoloading produces over-hat and  can cause a lot of traffic. A new loaded page on Reddit produces lots of comment requests at once. That will cause some requests to fail. Currently every request will just be repeated until success. That may take a while sometimes.
-If Reddit already has connection problems, you should disable autoloading. It will produce more and more repeating requests, causing even more stress for the server.
+--------
+
+**v1.80**
+
+I finally added a storing option for the settings.
+There are two new menu buttons, one to hide/show the sidebar, one for autoloading the comments and images. The script is tested on Chrome and Firefox. Please contact me if you encounter any problems.
