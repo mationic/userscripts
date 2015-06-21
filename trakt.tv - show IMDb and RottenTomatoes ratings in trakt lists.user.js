@@ -11,28 +11,34 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.10
+// @version        0.1.11
 //
 // ==/UserScript==
 
 
-
 (function ($) {
     'use strict';
-    /*jslint browser:true,regexp: true, newcap: true */
+    /*jslint browser: true,regexp: true, newcap: true, todo: true */
     /*global $, jQuery, GM_xmlhttpRequest */
+
+
+    /**
+    *  TODO: Disable auto positioning for ratings on window resize
+    */
+
     var loadRatingsForItem = function () {
-            var imdb = $('<h4>', {
+            var imdb = $('<h3>', {
                     'class': 'ratings',
                     'html': 'IMDb: <span class="value">&nbsp;</span>'
                 }),
-                tomatoes = $('<h4>', {
+                tomatoes = $('<h3>', {
                     'class': 'ratings',
                     'html': 'R.T. c/u: <span class="value">&nbsp;</span>'
                 }),
                 url;
             $(this).find('.quick-icons').after(tomatoes);
             $(this).find('.quick-icons').after(imdb);
+            $(this).addClass('ratingsloaded');
 
             if ($(this).attr('data-type') === 'movie') {
 
@@ -50,8 +56,12 @@
                                     res.imdbRating = '-   ';
                                     res.imdbVotes = 0;
                                 }
-                                if (res.tomatoRating === undefined || res.tomatoRating === "N/A") { res.tomatoRating = '-'; }
-                                if (res.tomatoUserRating === undefined || res.tomatoUserRating === "N/A") { res.tomatoUserRating = '-'; }
+                                if (res.tomatoRating === undefined || res.tomatoRating === "N/A") {
+                                    res.tomatoRating = '-';
+                                }
+                                if (res.tomatoUserRating === undefined || res.tomatoUserRating === "N/A") {
+                                    res.tomatoUserRating = '-';
+                                }
                                 $(imdb).find('span').html(res.imdbRating + ' (' + res.imdbVotes + ' Votes)');
                                 $(tomatoes).find('span').html('&nbsp;&nbsp;&nbsp;&nbsp;' + res.tomatoRating + ' / ' + res.tomatoUserRating + '</span>');
                             },
@@ -68,36 +78,56 @@
         },
         parseRating = function (item, type) {
             var r;
-            if (type === 'originalOrder') { return $(item).attr('startOrder'); }
+            if (type === 'originalOrder') {
+                return $(item).attr('startOrder');
+            }
             if (type === 'trakt') {
                 r = $(item).find("div.percentage").text().slice(0, -1);
-                if (r !== null && r >= 0 && r <= 100) { return r; }
+                if (r !== null && r >= 0 && r <= 100) {
+                    return r;
+                }
             }
-            if (type === 'imdb') { r = $(item).find("h4.ratings").text().match(/IMDb\:\W+(\d(\.\d)?).*/i); }
-            if (type === 'rtcritic') { r = $(item).find("h4.ratings").text().match(/R\.T\. c\/u\:\W+(\d(\.\d)?)-?\W*\/.*/i); }
-            if (type === 'rtuser') { r = $(item).find("h4.ratings").text().match(/R\.T\. c\/u\:\W+\d?\.?\d?-?\W*\/\W*(\d(\.\d)?)-?.*/i); }
-            if (r !== null && r.length > 1) { return r[1]; }
+            if (type === 'imdb') {
+                r = $(item).find("h3.ratings").text().match(/IMDb\:\W+(\d(\.\d)?).*/i);
+            }
+            if (type === 'rtcritic') {
+                r = $(item).find("h3.ratings").text().match(/R\.T\. c\/u\:\W+(\d(\.\d)?)-?\W*\/.*/i);
+            }
+            if (type === 'rtuser') {
+                r = $(item).find("h3.ratings").text().match(/R\.T\. c\/u\:\W+\d?\.?\d?-?\W*\/\W*(\d(\.\d)?)-?.*/i);
+            }
+            if (r !== null && r.length > 1) {
+                return r[1];
+            }
             return -1;
         },
         sortByRating = function (e) {
-            $('.trakt-icon-swap-vertical').next().find('button').html($(e.target).text() + " <span class='caret'></span>");
-            var dict = {},
-                order,
-                parent,
-                items;
+            var items, order,
+                dict = {},
+                parent = $("div.grid-item").parent(),
+                how = function (a, b) { return a - b; };
+            $('#sortable-name').attr('data-sort-by', $(e.target).attr('data-sort-by'));
+            $('#sortable-name').text($(e.target).text());
             $("div.grid-item").each(function () {
-                var rating = parseRating(this, $(e.target).attr('id'));
+                $(this).css('position', '').css('left', '').css('top', '');
+                var rating = parseRating(this, $(e.target).attr('data-sort-by'));
                 if (dict[rating] === undefined) {
                     dict[rating] = [$(this)];
                 } else {
                     dict[rating].push($(this));
                 }
             });
-            order = Object.keys(dict).sort();
-            parent = $("div.grid-item").parent();
+            if ($('#sort-direction').hasClass('desc')) {
+                how = function (b, a) { return a - b; };
+            }
+
+            order = Object.keys(dict).sort(how);
+
             while (order.length > 0) {
                 items = dict[order.pop()];
-                while (items.length > 0) { parent.append(items.shift()); }
+                while (items.length > 0) {
+                    parent.append(items.shift());
+                }
             }
         },
         init = function () {
@@ -106,29 +136,31 @@
 
             if (/^\/users\/.+\/(collection|ratings|lists\/|watchlist)/.test(window.location.pathname)) {
                 var sortMenu = $('.trakt-icon-swap-vertical').next().find('ul');
-                sortMenu.find('a').first().attr('id', 'originalOrder');
-                sortMenu.append($('<li>', { html: "<a id='imdb'>IMDb Rating</a>" }));
-                sortMenu.append($('<li>', { html: "<a id='trakt'>Trakt Rating</a>" }));
-                sortMenu.append($('<li>', { html: "<a id='rtcritic'>RottenTomatoes critic</a>" }));
-                sortMenu.append($('<li>', { html: "<a id='rtuser'>RottenTomatoes user</a>" }));
-                sortMenu.find('a').click(sortByRating);
+                sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='imdb' data-sort-how='desc'>IMDb Rating</a>" }));
+                sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='rtcritic' data-sort-how='desc'>RottenTomatoes critic</a>" }));
+                sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='rtuser' data-sort-how='desc'>RottenTomatoes user</a>" }));
+                sortMenu.find('a').click(function () { $("div.grid-item").each(function () { $(this).css('position', 'absolute'); }); });
+                sortMenu.find('a.rating').click(sortByRating);
+                $('#sort-direction').click(function () {
+                    $('.trakt-icon-swap-vertical').next().find('ul').find('a.rating[data-sort-by=' + $('#sortable-name').attr('data-sort-by') + ']').click();
+                });
             }
-
-            $("div.grid-item").each(function (i) {
-                $(this).attr('startOrder', 99 - i);
-            });
-            if ($("div.grid-item[data-type='movie']").size() > 0) { $('div.grid-item').each(loadRatingsForItem); }
+            if ($("div.grid-item[data-type='movie']").size() > 0) {
+                $('div.grid-item').not('.ratingsloaded').each(loadRatingsForItem);
+            }
         };
 
 
     $(window).ready(function () {
 
-        $('head').append('<style>.ratings { padding-left: 10px!important; background-color: white; color: black; font-size: 12px!important; text-align: left!important; };</style>');
+        $('head').append('<style>.ratings { margin-top: 0px!important; padding-left: 10px!important; background-color: white; color: black; font-size: 12px!important; text-align: left!important; };</style>');
         $('head').append('<style>.value { padding-left: 8px!important; font-weight: bolder!important; font-size: 13px!important; };</style>');
         init();
 
         $(window).bind('DOMNodeInserted', function (e) {
-            if (e.target.tagName === 'BODY') { $(e.target).ready(init); }
+            if (e.target.tagName === 'BODY') {
+                $(e.target).ready(init);
+            }
         });
 
     });
