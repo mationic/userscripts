@@ -7,11 +7,11 @@
 // @include        /^https?://(.+\.)?trakt\.tv/?.*$/
 // @exclude        /^https?://(.+\.)?trakt\.tv/(shows|calendars)/?.*$/
 //
-// @require        http://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js
+// @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.17
+// @version        0.1.18
 //
 // ==/UserScript==
 
