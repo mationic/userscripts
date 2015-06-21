@@ -11,7 +11,7 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.14
+// @version        0.1.15
 //
 // ==/UserScript==
 
@@ -102,8 +102,8 @@
                 dict = {},
                 parent = $("div.grid-item").parent(),
                 how = function (a, b) { return a - b; };
-            $('#sortable-name').attr('data-sort-by', $(e.target).attr('data-sort-by'));
-            $('#sortable-name').text($(e.target).text());
+            $('#sortable-name').text($(e.target).text()).attr('data-sort-by', $(e.target).attr('data-sort-by'));
+            $('.trakt-icon-swap-vertical').next().find('.btn-default').html($(e.target).text() + ' <span class="caret"></span>');
             $("div.grid-item").each(function () {
                 var rating = parseRating(this, $(e.target).attr('data-sort-by'));
                 if (dict[rating] === undefined) {
@@ -126,11 +126,13 @@
             }
         },
         orderratings = function () {
-            if ($('.trakt-icon-swap-vertical').next().find('a.rating[data-sort-by=' + $('#sortable-name').attr('data-sort-by') + ']').size() > 0) {
+            if ($('.trakt-icon-swap-vertical').next().find('a.rating:contains("' + $('.trakt-icon-swap-vertical').next().find('.btn-default').text().trim() + '")').size() > 0) {
+                $(".no-top").hide();
                 setTimeout(function () {
                     $("div.grid-item").each(function () { $(this).attr('style', '{position:relative;top:0px;left:0px;}'); });
                 }, 500);
             } else {
+                $(".no-top").show();
                 $("div.grid-item").each(function () { $(this).css('position', 'absolute'); });
             }
         },
@@ -146,7 +148,7 @@
                 sortMenu.find('a.rating').click(sortByRating);
                 sortMenu.find('a').click(orderratings);
                 $('#sort-direction').click(function () {
-                    $('.trakt-icon-swap-vertical').next().find('ul').find('a.rating[data-sort-by=' + $('#sortable-name').attr('data-sort-by') + ']').click();
+                    $('.trakt-icon-swap-vertical').next().find('ul').find('a.rating[data-sort-by=' + $('.trakt-icon-swap-vertical').next().find('.btn-default').text() + ']').click();
                 });
             }
             if ($("div.grid-item[data-type='movie']").size() > 0) {
