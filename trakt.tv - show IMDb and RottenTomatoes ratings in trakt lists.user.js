@@ -11,7 +11,7 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.15
+// @version        0.1.16
 //
 // ==/UserScript==
 
@@ -147,9 +147,12 @@
                 sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='rtuser' data-sort-how='desc'>RottenTomatoes user</a>" }));
                 sortMenu.find('a.rating').click(sortByRating);
                 sortMenu.find('a').click(orderratings);
+                $(window).on('resize', orderratings);
                 $('#sort-direction').click(function () {
                     $('.trakt-icon-swap-vertical').next().find('ul').find('a.rating[data-sort-by=' + $('.trakt-icon-swap-vertical').next().find('.btn-default').text() + ']').click();
                 });
+            } else {
+                $(window).off('resize', orderratings);
             }
             if ($("div.grid-item[data-type='movie']").size() > 0) {
                 $('div.grid-item').not('.ratingsloaded').each(loadRatingsForItem);
@@ -168,7 +171,7 @@
                 $(e.target).ready(init);
             }
         });
-        $(window).on('resize', orderratings);
+
     });
 
 }(jQuery));
