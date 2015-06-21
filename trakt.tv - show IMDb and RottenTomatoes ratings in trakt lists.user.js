@@ -11,7 +11,7 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.16
+// @version        0.1.17
 //
 // ==/UserScript==
 
@@ -102,8 +102,11 @@
                 dict = {},
                 parent = $("div.grid-item").parent(),
                 how = function (a, b) { return a - b; };
-            $('#sortable-name').text($(e.target).text()).attr('data-sort-by', $(e.target).attr('data-sort-by'));
-            $('.trakt-icon-swap-vertical').next().find('.btn-default').html($(e.target).text() + ' <span class="caret"></span>');
+            if ($('#sortable-name').size() > 0) {
+                $('#sortable-name').text($(e.target).text()).attr('data-sort-by', $(e.target).attr('data-sort-by'));
+            } else {
+                $('.trakt-icon-swap-vertical').next().find('.btn-default').html($(e.target).text() + ' <span class="caret"></span>');
+            }
             $("div.grid-item").each(function () {
                 var rating = parseRating(this, $(e.target).attr('data-sort-by'));
                 if (dict[rating] === undefined) {
@@ -149,7 +152,7 @@
                 sortMenu.find('a').click(orderratings);
                 $(window).on('resize', orderratings);
                 $('#sort-direction').click(function () {
-                    $('.trakt-icon-swap-vertical').next().find('ul').find('a.rating[data-sort-by=' + $('.trakt-icon-swap-vertical').next().find('.btn-default').text() + ']').click();
+                    $('.trakt-icon-swap-vertical').next().find('a.rating:contains("' + $('.trakt-icon-swap-vertical').next().find('.btn-default').text().trim() + '")').click();
                 });
             } else {
                 $(window).off('resize', orderratings);
