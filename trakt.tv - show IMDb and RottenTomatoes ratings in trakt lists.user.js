@@ -125,6 +125,15 @@
                 }
             }
         },
+        orderratings = function () {
+            if ($('.trakt-icon-swap-vertical').next().find('a.rating[data-sort-by=' + $('#sortable-name').attr('data-sort-by') + ']').size() > 0) {
+                setTimeout(function () {
+                    $("div.grid-item").each(function () { $(this).attr('style', '{position:relative;top:0px;left:0px;}'); });
+                }, 500);
+            } else {
+                $("div.grid-item").each(function () { $(this).css('position', 'absolute'); });
+            }
+        },
         init = function () {
 
             $("div[id*=\"huckster-desktop\"]").html("");
@@ -134,8 +143,8 @@
                 sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='imdb' data-sort-how='desc'>IMDb Rating</a>" }));
                 sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='rtcritic' data-sort-how='desc'>RottenTomatoes critic</a>" }));
                 sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='rtuser' data-sort-how='desc'>RottenTomatoes user</a>" }));
-                sortMenu.find('a').click(function () { $("div.grid-item").each(function () { $(this).css('position', 'absolute'); }); });
                 sortMenu.find('a.rating').click(sortByRating);
+                sortMenu.find('a').click(orderratings);
                 $('#sort-direction').click(function () {
                     $('.trakt-icon-swap-vertical').next().find('ul').find('a.rating[data-sort-by=' + $('#sortable-name').attr('data-sort-by') + ']').click();
                 });
@@ -157,13 +166,7 @@
                 $(e.target).ready(init);
             }
         });
-        $(window).on('resize', function () {
-            if ($('.trakt-icon-swap-vertical').next().find('a.rating[data-sort-by=' + $('#sortable-name').attr('data-sort-by') + ']').size() > 0) {
-                setTimeout(function () {
-                    $("div.grid-item").each(function () { $(this).attr('style', '{position:relative;top:0px;left:0px;}'); });
-                }, 500);
-            }
-        });
+        $(window).on('resize', orderratings);
     });
 
 }(jQuery));
