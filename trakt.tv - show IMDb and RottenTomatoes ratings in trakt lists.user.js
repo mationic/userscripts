@@ -11,7 +11,7 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.13
+// @version        0.1.14
 //
 // ==/UserScript==
 
@@ -61,10 +61,11 @@
                                 $(tomatoes).find('span').html('&nbsp;&nbsp;&nbsp;&nbsp;' + res.tomatoRating + ' / ' + res.tomatoUserRating + '</span>');
                             },
                             onerror: function () {
-                                $(imdb).find('span').html('<span style="color: red!important; font-weight: normal; font-size: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;failed<span>');
+                                $(imdb).find('span').html('<span style="color: #c11!important; font-weight: normal; font-size: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;failed<span>');
                             }
                         });
-
+                    }).fail(function () {
+                        $(imdb).find('span').html('<span style="color: #c11!important; font-weight: normal; font-size: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;failed<span>');
                     });
                 }
 
@@ -104,7 +105,6 @@
             $('#sortable-name').attr('data-sort-by', $(e.target).attr('data-sort-by'));
             $('#sortable-name').text($(e.target).text());
             $("div.grid-item").each(function () {
-                $(this).css('position', '').css('left', '').css('top', '');
                 var rating = parseRating(this, $(e.target).attr('data-sort-by'));
                 if (dict[rating] === undefined) {
                     dict[rating] = [$(this)];
