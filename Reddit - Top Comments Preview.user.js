@@ -2,7 +2,7 @@
 // @name           Reddit - Top Comments Preview
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie, Erik Wannebo, gavin19
-// @version        2.00
+// @version        2.01
 // @description    Preview to the top comments on Reddit (+ optional: autoload comments, autoload images, autohide sidebar)
 // @homepage       https://github.com/mationic/userscripts/blob/master/Reddit%20-%20Top%20Comments%20Preview.readme.md
 // @updateURL      https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
@@ -24,9 +24,9 @@
             topComments: 3,
             /* sortings: top, best, new, hot, controversial, old */
             commentSorting: 'top',
-            /* Comments not matched by array will be added at the top              */
-            /* Comments matched by corresponding expandos will be added the bottom */
-            /* Options: 'selftext', 'image', 'video-muted' (gif/gfy etc), 'video'  */
+            /* Comments not matched by array will be added at the top                 */
+            /* Comments matched by corresponding expandos will be added at the bottom */
+            /* Options: 'selftext', 'image', 'video-muted' (gif/gfy etc), 'video'     */
             commentsAtBottom_autoLoad: ['selftext', 'image', 'video-muted', 'video'],
             commentsAtBottom_topLinks: [],
             /* Disable option for hiding the sidebar. */
@@ -190,7 +190,7 @@
                     ".res-nightmode div[id^=preview] .ulink,.res-nightmode div[id^=preview] .md a{color:#1496dc!important} .res-nightmode div[id^=preview]{background:#333!important;border-color:#666!important}",
                     ".res-nightmode div[id^=preview] .md{background:#555!important;border-color:#222!important} .res-nightmode .toplink{color:#eee!important}",
                     ".res-nightmode div[id^=preview] .points{color:#ddd!important} .res-nightmode div[id^=preview] .permalink{color:#ccc!important}",
-                    ".res-nightmode div[id^=preview] .md blockquote{color:#8C8C8C!important} .res-nightmode div[id^=preview] hr{border-color:#777!important};}",
+                    ".res-nightmode div[id^=preview] .md blockquote, .res-nightmode div[id^=preview] .md del{color:#8C8C8C!important} .res-nightmode div[id^=preview] hr{border-color:#777!important};}",
                     ".res-nightmode div[id^=preview] hr{border-color:#777!important;}"
                 ].join("");
             style.type = 'text/css';
