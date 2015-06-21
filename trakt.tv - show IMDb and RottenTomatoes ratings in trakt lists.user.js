@@ -134,7 +134,7 @@
 
             $("div[id*=\"huckster-desktop\"]").html("");
 
-            if (/^\/users\/.+\/(collection|ratings|lists\/|watchlist)/.test(window.location.pathname)) {
+            if (/^\/users\/.+\/(collection|ratings|lists\/|watchlist)/.test(window.location.pathname) && $('.trakt-icon-swap-vertical').next().find('ul a.rating').size() === 0) {
                 var sortMenu = $('.trakt-icon-swap-vertical').next().find('ul');
                 sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='imdb' data-sort-how='desc'>IMDb Rating</a>" }));
                 sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='rtcritic' data-sort-how='desc'>RottenTomatoes critic</a>" }));
@@ -148,21 +148,22 @@
             if ($("div.grid-item[data-type='movie']").size() > 0) {
                 $('div.grid-item').not('.ratingsloaded').each(loadRatingsForItem);
             }
+            return false;
         };
 
 
     $(window).ready(function () {
 
-        $('head').append('<style>.ratings { margin-top: 0px!important; padding-left: 10px!important; background-color: white; color: black; font-size: 12px!important; text-align: left!important; };</style>');
-        $('head').append('<style>.value { padding-left: 8px!important; font-weight: bolder!important; font-size: 13px!important; };</style>');
+        $('head').append('<style>.ratings { padding-top:2px!important; margin-top: 0px!important; margin-left:1px!important; margin-right:1px!important; padding-left: 10px!important; background-color: #292D41; color: white; font-size: 12px!important; text-align: left!important; };</style>');
+        $('head').append('<style>.value { padding-left: 8px!important; font-weight: bolder!important; font-size: 13px!important; };</style><style>.quick-icons { border-bottom:none!important; };</style>');
         init();
 
-        $(window).bind('DOMNodeInserted', function (e) {
+        $(document.body).on('load', init);
+        /*$(window).on('DOMNodeInserted', function (e) {
             if (e.target.tagName === 'BODY') {
                 $(e.target).ready(init);
             }
-        });
-
+        });*/
     });
 
 }(jQuery));
