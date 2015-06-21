@@ -7,11 +7,11 @@
 // @include        /^https?://(.+\.)?trakt\.tv/?.*$/
 // @exclude        /^https?://(.+\.)?trakt\.tv/(shows|calendars)/?.*$/
 //
-// @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
+// @require        http://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.11
+// @version        0.1.13
 //
 // ==/UserScript==
 
@@ -20,11 +20,6 @@
     'use strict';
     /*jslint browser: true,regexp: true, newcap: true, todo: true */
     /*global $, jQuery, GM_xmlhttpRequest */
-
-
-    /**
-    *  TODO: Disable auto positioning for ratings on window resize
-    */
 
     var loadRatingsForItem = function () {
             var imdb = $('<h3>', {
@@ -148,7 +143,6 @@
             if ($("div.grid-item[data-type='movie']").size() > 0) {
                 $('div.grid-item').not('.ratingsloaded').each(loadRatingsForItem);
             }
-            return false;
         };
 
 
@@ -158,12 +152,18 @@
         $('head').append('<style>.value { padding-left: 8px!important; font-weight: bolder!important; font-size: 13px!important; };</style><style>.quick-icons { border-bottom:none!important; };</style>');
         init();
 
-        $(document.body).on('load', init);
-        /*$(window).on('DOMNodeInserted', function (e) {
+        $(window).on('DOMNodeInserted', function (e) {
             if (e.target.tagName === 'BODY') {
                 $(e.target).ready(init);
             }
-        });*/
+        });
+        $(window).on('resize', function () {
+            if ($('.trakt-icon-swap-vertical').next().find('a.rating[data-sort-by=' + $('#sortable-name').attr('data-sort-by') + ']').size() > 0) {
+                setTimeout(function () {
+                    $("div.grid-item").each(function () { $(this).attr('style', '{position:relative;top:0px;left:0px;}'); });
+                }, 500);
+            }
+        });
     });
 
 }(jQuery));
