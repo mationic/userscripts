@@ -50,32 +50,16 @@
 
     $(function () {
         $('#main > div.top-section > ul').prepend($('<br><br>'));
-        $('#main > div.top-section > ul').prepend($('<li>', {
-            html: '<a href="#all">All</a>'
-        }).click(showc));
-        $('#main > div.top-section > ul').prepend($('<li>', {
-            html: '<a href="#fcs">Female+Couple+Shemale</a>'
-        }).click(showc));
-        $('#main > div.top-section > ul').prepend($('<li>', {
-            html: '<a href="#fc">Female+Couple</a>'
-        }).click(showc));
-        $('#main > div.top-section > ul').prepend($('<li>', {
-            html: '<a href="#m">Male</a>'
-        }).click(showc));
-        $('#main > div.top-section > ul').prepend($('<li>', {
-            html: '<a href="#s">Shemale</a>'
-        }).click(showc));
-        $('#main > div.top-section > ul').prepend($('<li>', {
-            html: '<a href="#c">Couple</a>'
-        }).click(showc));
-        $('#main > div.top-section > ul').prepend($('<li>', {
-            html: '<a href="#f">Female</a>'
-        }).click(showc));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#all">All</a>' }).click(showc));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#fcs">Female+Couple+Shemale</a>' }).click(showc));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#fc">Female+Couple</a>' }).click(showc));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#m">Male</a>' }).click(showc));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#s">Shemale</a>' }).click(showc));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#c">Couple</a>' }).click(showc));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#f">Female</a>' }).click(showc));
 
         document.addEventListener("DOMNodeInserted", function (event) {
-            if ($(event.path[0]).hasClass('list')) {
-                showc('update');
-            }
+            if ($(event.path[0]).hasClass('list')) { showc('update'); }
         });
         var setting = window.location.href.split("#");
         if (setting && setting.length > 1) {
