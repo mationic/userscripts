@@ -11,7 +11,7 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.19
+// @version        0.1.20
 //
 // ==/UserScript==
 
@@ -68,7 +68,6 @@
                         $(imdb).find('span').html('<span style="color: #c11!important; font-weight: normal; font-size: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;failed<span>');
                     });
                 }
-
             }
 
         },
@@ -102,6 +101,8 @@
                 dict = {},
                 parent = $("div.grid-item").parent(),
                 how = function (a, b) { return a - b; };
+
+            $(".no-top").hide();
             if ($('#sortable-name').size() > 0) {
                 $('#sortable-name').text($(e.target).text()).attr('data-sort-by', $(e.target).attr('data-sort-by'));
             } else {
@@ -128,18 +129,14 @@
                 }
             }
         },
-        orderratings = function () {
-            if ($('.grid-item').first().attr('style') !== undefined) {
+        setPositioning = function () {
+            setTimeout(function () {
                 if ($('.trakt-icon-swap-vertical').next().find('a.rating:contains("' + $('.trakt-icon-swap-vertical').next().find('.btn-default').text().trim() + '")').size() > 0) {
-                    $(".no-top").hide();
-                    setTimeout(function () {
-                        $("div.grid-item").each(function () { $(this).attr('style', '{position:relative;top:0px;left:0px;}'); });
-                    }, 500);
-                } else {
-                    $(".no-top").show();
+                    $("div.grid-item").each(function () { $(this).attr('style', '{position:relative;top:0px;left:0px;}'); });
+                } else if ($('.grid-item').first().attr('style') !== undefined) {
                     $("div.grid-item").each(function () { $(this).css('position', 'absolute'); });
                 }
-            }
+            }, 500);
         },
         init = function () {
 
@@ -151,13 +148,13 @@
                 sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='rtcritic' data-sort-how='desc'>RottenTomatoes critic</a>" }));
                 sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='rtuser' data-sort-how='desc'>RottenTomatoes user</a>" }));
                 sortMenu.find('a.rating').click(sortByRating);
-                sortMenu.find('a').click(orderratings);
-                $(window).on('resize', orderratings);
+                sortMenu.find('a').click(setPositioning);
+                $(window).on('resize', setPositioning);
                 $('#sort-direction').click(function () {
                     $('.trakt-icon-swap-vertical').next().find('a.rating:contains("' + $('.trakt-icon-swap-vertical').next().find('.btn-default').text().trim() + '")').click();
                 });
             } else {
-                $(window).off('resize', orderratings);
+                $(window).off('resize', setPositioning);
             }
             if ($("div.grid-item[data-type='movie']").size() > 0) {
                 $('div.grid-item').not('.ratingsloaded').each(loadRatingsForItem);
