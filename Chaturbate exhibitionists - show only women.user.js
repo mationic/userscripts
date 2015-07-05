@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 /*
- * The JQuery Cookie plugin is only used to disable terms and conditions popup.
+ * The JQuery Cookie plugin is only used to disable the terms and conditions popup.
  */
 
 (function ($) {
