@@ -4,19 +4,19 @@
 //
 // @description    Filter gender on the amateur site: http://chaturbate.com/exhibitionist-cams
 //
-// @include        /^https?://(.+\.)?chaturbate\.com/exhibitionist-cams/.*$/
+// @include        /^https?://(.+\.)?chaturbate\.com/exhibitionist-cams/?.*$/
 //
-// @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
-// @require        http://raw.githubusercontent.com/mationic/jquery-cookie/master/src/jquery.cookie.js
+// @require        https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
+// @require        https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js
 //
 // @grant          none
 //
-// @version        0.1.3
+// @version        0.1.4
 // ==/UserScript==
 
-/*
- * The JQuery Cookie plugin is only used to disable the terms and conditions popup.
- */
+/**
+ *      The JQuery Cookie plugin is only used to disable the terms and conditions overlay.
+ **/
 
 (function ($) {
     "use strict";
