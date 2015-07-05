@@ -10,7 +10,7 @@
 //
 // @grant          none
 //
-// @version        0.1.1
+// @version        0.1.2
 // ==/UserScript==
 
 (function ($) {
@@ -18,57 +18,74 @@
     /*jslint browser:true */
     /*global $, jQuery */
 
-    var showc = function (e) {
-        var i,
-            len,
-            cam,
-            act;
-        if (e === "update") {
-            act = $('#main > div.top-section > ul > li.active').find('a').attr('href');
-            if (act && act[0] === '#') {
-                cam = act.substr(1);
-            }
-        } else {
-            $('#main > div.top-section > ul > li').removeClass('active');
-            $(this).addClass('active');
-            cam = $(this).find('a').attr('href').substr(1);
-        }
+    var options = {
+        /* optional: f, c, s, fc, fcs */
+        startFilter: 'f',
+        /* Activated if username and password not empty */
+        autoLogin: { username: '', password: '' }
+    },
 
-        if (cam !== null && cam !== 'all') {
-            $('#main > div.content > div.c-1.endless_page_template > ul.list > li').hide();
 
-            for (i = 0, len = cam.length; i < len; i += 1) {
-                $('#main > div.content > div.c-1.endless_page_template > ul.list > li span.gender' + cam[i]).parent().parent().parent().show();
+
+
+        filter = function (e) {
+            var i, len, cam, act;
+            if (e === "update") {
+                act = $('#main > div.top-section > ul > li.active').find('a').attr('href');
+                if (act && act[0] === '#') { cam = act.substr(1); }
+            } else {
+                $('#main > div.top-section > ul > li').removeClass('active');
+                $(this).addClass('active');
+                cam = $(this).find('a').attr('href').substr(1);
             }
 
-        } else {
-            $('#main > div.content > div.c-1.endless_page_template > ul.list > li').show();
-        }
+            if (cam !== null && cam !== 'all') {
+                $('#main > div.content > div.c-1.endless_page_template > ul.list > li').hide();
 
-    };
+                for (i = 0, len = cam.length; i < len; i += 1) {
+                    $('#main > div.content > div.c-1.endless_page_template > ul.list > li span.gender' + cam[i]).parent().parent().parent().show();
+                }
+
+            } else {
+                $('#main > div.content > div.c-1.endless_page_template > ul.list > li').show();
+            }
+        };
 
 
     $(function () {
+        var setting = window.location.href.split("#"),
+            gender = 'all';
+
         $('#main > div.top-section > ul').prepend($('<br><br>'));
-        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#all">All</a>' }).click(showc));
-        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#fcs">Female+Couple+Shemale</a>' }).click(showc));
-        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#fc">Female+Couple</a>' }).click(showc));
-        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#m">Male</a>' }).click(showc));
-        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#s">Shemale</a>' }).click(showc));
-        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#c">Couple</a>' }).click(showc));
-        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#f">Female</a>' }).click(showc));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#all">All</a>' }).click(filter));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#fcs">Female+Couple+Shemale</a>' }).click(filter));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#fc">Female+Couple</a>' }).click(filter));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#m">Male</a>' }).click(filter));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#s">Shemale</a>' }).click(filter));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#c">Couple</a>' }).click(filter));
+        $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#f">Female</a>' }).click(filter));
 
         document.addEventListener("DOMNodeInserted", function (event) {
-            if ($(event.path[0]).hasClass('list')) { showc('update'); }
+            if ($(event.path[0]).hasClass('list')) { filter('update'); }
         });
-        var setting = window.location.href.split("#");
+
+        if (options !== undefined && options.autoLogin !== undefined && options.autoLogin.password !== '' && options.autoLogin.username !== '' && $('a[href$="auth/login/"]').size() > 0) {
+            $('#login-box').find('form input[type="password"]').attr('value', options.autoLogin.password);
+            $('#login-box').find('form input[name="username"]').attr('value', options.autoLogin.username);
+            $('#login-box').find('form input[type="submit"]').click();
+        }
+
+        setTimeout(function () { $('div#entrance_terms').find('a#close_entrance_terms').click(); }, 200);
         if (setting && setting.length > 1) {
             $('#main > div.top-section > ul > li > a[href="#' + setting[1] + '"]').click();
         } else {
-            $('#main > div.top-section > ul > li > a[href="#all"]').parent().addClass('active');
+            if (options !== undefined || options.startFilter !== undefined || options.startFilter !== '') {
+                $('#main > div.top-section > ul > li > a[href="#all"]').parent().addClass('active');
+                gender = options.startFilter;
+            }
+            $('#main > div.top-section > ul > li > a[href="#' + gender + '"]').click();
         }
     });
 
 
 }(jQuery));
-
