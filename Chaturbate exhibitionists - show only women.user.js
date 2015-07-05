@@ -7,25 +7,26 @@
 // @include        /^https?://(.+\.)?chaturbate\.com/exhibitionist-cams/.*$/
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
+// @require        http://raw.githubusercontent.com/mationic/jquery-cookie/master/src/jquery.cookie.js
 //
 // @grant          none
 //
-// @version        0.1.2
+// @version        0.1.3
 // ==/UserScript==
+
+/*
+ * The JQuery Cookie plugin is only used to disable terms and conditions popup.
+ */
 
 (function ($) {
     "use strict";
-    /*jslint browser:true */
+    /*jslint browser: true */
     /*global $, jQuery */
 
     var options = {
-        /* optional: f, c, s, fc, fcs */
-        startFilter: 'f',
-        /* Activated if username and password not empty */
-        autoLogin: { username: '', password: '' }
+        startFilter: 'f', /* f, c, s, fc, fcs */
+        autoLogin: { active: false, username: '', password: '' }
     },
-
-
 
 
         filter = function (e) {
@@ -56,6 +57,9 @@
         var setting = window.location.href.split("#"),
             gender = 'all';
 
+        $('#entrance_terms:visible, #overlay:visible').hide();
+        if ($.cookie('agreeterms') !== '1') { $.cookie('agreeterms', '1', {expires: 365, path: '/'}); }
+
         $('#main > div.top-section > ul').prepend($('<br><br>'));
         $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#all">All</a>' }).click(filter));
         $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#fcs">Female+Couple+Shemale</a>' }).click(filter));
@@ -66,26 +70,24 @@
         $('#main > div.top-section > ul').prepend($('<li>', { html: '<a href="#f">Female</a>' }).click(filter));
 
         document.addEventListener("DOMNodeInserted", function (event) {
-            if ($(event.path[0]).hasClass('list')) { filter('update'); }
+            if (event.target.nodeName === 'UL' && $(event.path[0]).hasClass('list')) { filter('update'); }
         });
 
-        if (options !== undefined && options.autoLogin !== undefined && options.autoLogin.password !== '' && options.autoLogin.username !== '' && $('a[href$="auth/login/"]').size() > 0) {
+        if (options !== undefined && options.autoLogin !== undefined && options.autoLogin.active === true && options.autoLogin.password !== '' && options.autoLogin.username !== '' && $('a[href$="auth/login/"]').size() > 0) {
             $('#login-box').find('form input[type="password"]').attr('value', options.autoLogin.password);
             $('#login-box').find('form input[name="username"]').attr('value', options.autoLogin.username);
             $('#login-box').find('form input[type="submit"]').click();
         }
 
-        setTimeout(function () { $('div#entrance_terms').find('a#close_entrance_terms').click(); }, 200);
         if (setting && setting.length > 1) {
             $('#main > div.top-section > ul > li > a[href="#' + setting[1] + '"]').click();
         } else {
-            if (options !== undefined || options.startFilter !== undefined || options.startFilter !== '') {
-                $('#main > div.top-section > ul > li > a[href="#all"]').parent().addClass('active');
-                gender = options.startFilter;
-            }
+            if (options !== undefined && options.startFilter !== undefined && options.startFilter !== '') { gender = options.startFilter; }
+            $('div.top-section a[href="#' + gender + '"]').parent().addClass('active');
             $('#main > div.top-section > ul > li > a[href="#' + gender + '"]').click();
         }
     });
 
 
 }(jQuery));
+
