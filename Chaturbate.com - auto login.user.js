@@ -17,12 +17,13 @@
 /**
  *      The JQuery Cookie plugin is only used to disable the terms and conditions overlay.
  **/
+
+/*jslint browser:true*/
+/*global $,jQuery*/
 jQuery.noConflict();
 
 (function ($) {
     "use strict";
-    /*jslint browser: true */
-    /*global $, jQuery */
 
     var options = {
         autoLogin: { active: false, username: '', password: '' }
