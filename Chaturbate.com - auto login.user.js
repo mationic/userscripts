@@ -11,7 +11,7 @@
 //
 // @grant          none
 //
-// @version        0.0.2
+// @version        0.0.3
 // ==/UserScript==
 
 /**
@@ -33,7 +33,8 @@ jQuery.noConflict();
         $('#entrance_terms:visible, #overlay:visible').hide();
         if ($.cookie('agreeterms') !== '1') { $.cookie('agreeterms', '1', {expires: 365, path: '/'}); }
 
-        $("img").each(function () { if ($(this).css('position') === "fixed") { $(this).hide(); } });
+        $("img, p").each(function () { if ($(this).css('position') === "fixed" || $(this).css('position') === "absolute") { $(this).hide(); } });
+
         if (options !== undefined && options.autoLogin !== undefined && options.autoLogin.active === true && options.autoLogin.password !== '' && options.autoLogin.username !== '' && $('a[href$="auth/login/"]').size() > 0) {
             $('#login-box').find('form input[type="password"]').attr('value', options.autoLogin.password);
             $('#login-box').find('form input[name="username"]').attr('value', options.autoLogin.username);
