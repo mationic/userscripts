@@ -10,7 +10,7 @@
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
-// @version        0.9
+// @version        0.10
 // @grant          none
 // ==/UserScript==
 
@@ -71,6 +71,7 @@
                     query = $('.xxx').parent();
                 }
                 query.show();
+                $('div#extra_webcams').show();
             } else {
                 $('a#loadImgs').addClass('imagesVisible');
                 $('a#loadImgs').html('Show thumbnails');
@@ -80,6 +81,7 @@
                     query = $('.xxx').parent();
                 }
                 query.hide();
+                $('div#extra_webcams').hide();
                 loadImgs();
             }
         });
