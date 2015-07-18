@@ -11,12 +11,13 @@
 //
 // @grant          none
 //
-// @version        0.0.1
+// @version        0.0.2
 // ==/UserScript==
 
 /**
  *      The JQuery Cookie plugin is only used to disable the terms and conditions overlay.
  **/
+jQuery.noConflict();
 
 (function ($) {
     "use strict";
