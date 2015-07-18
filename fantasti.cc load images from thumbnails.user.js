@@ -10,7 +10,7 @@
 //
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 //
-// @version        0.11
+// @version        0.12
 // @grant          none
 // ==/UserScript==
 
@@ -86,7 +86,7 @@
             }
         });
         $('.sm-navlist').append($('<li>').append(link));
-        $('head').append('<style>.images img { width: 100%!important; margin-left: 20px; };</style>');
+        $('head').append('<style>.images img { width: 100%!important; height: 100%!important; margin-left: 20px; };</style>');
 
         $(document).bind('DOMNodeInserted', function (e) {
             if ($('a#loadImgs').hasClass('imagesVisible') && e.target.tagName === 'DIV' && e.target.getAttribute('id') && (e.target.getAttribute('id') === 'loop' || e.target.getAttribute('id') === 'archive')) {
