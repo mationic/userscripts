@@ -110,6 +110,7 @@
 
                         breaker.find('div').css('display', 'inline');
                         $('#pagenavigation div').css('display', 'inline');
+                        breaker.find('span.active').css('padding', breaker.find('#nextnavbar a, #prevnavbar a').first().css('padding'));
                         if ($('#pagenavigation').width() > $('div#first-result').width()) { breaker.css('width', $('#pagenavigation').width()); }
                         $('#results_content').removeClass('trigger-block');
                     } else {
