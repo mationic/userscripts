@@ -18,6 +18,8 @@
     /*jslint browser:true, regexp:true */
     /*global $, jQuery  */
 
+    $.noConflict();
+
     var button, link, ids = [],
         linkSearch = function () {
             var url;
