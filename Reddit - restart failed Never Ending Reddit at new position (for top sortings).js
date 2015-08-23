@@ -2,7 +2,7 @@
 // @name           Reddit - restart failed Never Ending Reddit at new position (for top sortings)
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie
-// @version        0.0.16
+// @version        0.0.17
 // @description    Reddit Enhancement Suite "Never Ending Reddit" description
 // @updateURL      https://raw.githubusercontent.com/mationic/userscripts/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20new%20position%20(for%20top%20sortings).js
 // @downloadURL    https://raw.githubusercontent.com/mationic/userscripts/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20new%20position%20(for%20top%20sortings).js
@@ -29,7 +29,7 @@
 
             $.get(url, function (data) {
                 if ($(data).find('#siteTable div.thing').size()) {
-                    button.text("Link found.");
+                    button.text("link found - loading");
                     window.location.href = url;
                     return false;
                 }
@@ -54,7 +54,6 @@
                     'style': 'color:red;'
                 }).click(function () {
 
-                    button.css('color', '');
                     button.data("checkedLinks", 0);
                     $('#siteTable').find('div.thing').each(function () {
                         ids.push($(this).data('fullname'));
@@ -64,7 +63,7 @@
                 });
                 $('div#NERFail>p.nextprev>a').first().after(button);
                 link = button.next().attr('href').split('t3_').shift();
-                 $('div#NERFail').parent().append(button);
+                $('div#NERFail').parent().append(button);
             }
         });
 
