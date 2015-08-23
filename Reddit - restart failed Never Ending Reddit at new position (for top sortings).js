@@ -18,23 +18,14 @@
     /*jslint browser:true, newcap:true */
     /*global $, jQuery  */
 
-    var button, commentIDs = [],
-        link = $('div#NERFail>p.nextprev>a').last().prev().attr('href').split('t3_').shift(),
-        getCommentIDs = function () {
-            //button = $('div#NERFail>p.nextprev>a#NERcontinue');
-            button.css('color', '');
-            button.data("checkLinks", 0);
-            $('#siteTable').find('div.thing').each(function () {
-                commentIDs.push($(this).data('fullname'));
-            });
-        },
-        checkLinks = function () {
+    var button, link, ids = [],
+        linkSearch = function () {
             var url;
 
-            if (commentIDs.length === 0) {
+            if (ids.length === 0) {
                 return false;
             }
-            url = link + commentIDs.pop();
+            url = link + ids.pop();
 
             $.get(url, function (data) {
                 if ($(data).find('#siteTable div.thing').size()) {
@@ -43,13 +34,13 @@
                     button.off('click');
                     return true;
                 }
-                if (commentIDs.length === 0) {
+                if (ids.length === 0) {
                     button.text("Could'nt find a working link :(");
                     return false;
                 }
                 button.data("checkedLinks", parseInt(button.data("checkedLinks"), 10) + 1);
                 button.text("Searching for working link (checked: " + button.data("checkedLinks") + ")");
-                return checkLinks();
+                return linkSearch();
             });
         };
 
@@ -61,10 +52,17 @@
                     'href': '',
                     'style': 'color:red;'
                 }).click(function () {
-                    getCommentIDs();
-                    checkLinks();
+
+                    button.css('color', '');
+                    button.data("checkedLinks", 0);
+                    $('#siteTable').find('div.thing').each(function () {
+                        ids.push($(this).data('fullname'));
+                    });
+
+                    linkSearch();
                 });
                 $('div#NERFail>p.nextprev>a').first().after(button);
+                link = button.next().attr('href').split('t3_').shift();
             }
         });
     });
