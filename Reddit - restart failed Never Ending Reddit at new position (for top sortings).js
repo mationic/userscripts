@@ -2,13 +2,13 @@
 // @name           Reddit - restart failed Never Ending Reddit at new position (for top sortings)
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie
-// @version        0.0.10
+// @version        0.0.11
 // @description    Reddit Enhancement Suite "Never Ending Reddit" description
 // @updateURL      https://raw.githubusercontent.com/mationic/userscripts/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20new%20position%20(for%20top%20sortings).js
 // @downloadURL    https://raw.githubusercontent.com/mationic/userscripts/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20new%20position%20(for%20top%20sortings).js
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 // @grant          none
-// @include        /^https?:\/\/(.+\.)?reddit\.com\/top/?.*$/
+// @include        /^https?:\/\/(.+\.)?reddit\.com\/?.*$/
 // @exclude        /^https?:\/\/(.+\.)?reddit\.com\/.+\/comments\/.*$/
 // ==/UserScript==
 
@@ -47,15 +47,6 @@
 
     $(function () {
 
-        $('.neverEndingReddit>p').first().remove();
-        $('.neverEndingReddit>p').append($('.neverEndingReddit>p>a').clone());
-        $('.neverEndingReddit>p').attr('class','nextprev');
-        $('.neverEndingReddit').attr('id','NERFail');
-        var tmp = $('div#NERFail');
-        var par = tmp.parent();
-        tmp.remove();
-        par.append(tmp);
-
         $(document).bind('DOMNodeInserted', function (e) {
             if (e.target.tagName === 'DIV' && e.target.getAttribute('id') && e.target.getAttribute('id') === 'NERFail') {
                 button = $('<a>', {
@@ -76,5 +67,15 @@
                 link = button.next().attr('href').split('t3_').shift();
             }
         });
+
+        $('.neverEndingReddit>p').first().remove();
+        $('.neverEndingReddit>p').append($('.neverEndingReddit>p>a').clone());
+        $('.neverEndingReddit>p').attr('class','nextprev');
+        $('.neverEndingReddit').attr('id','NERFail');
+        var tmp = $('div#NERFail');
+        var par = tmp.parent();
+        tmp.remove();
+        par.append(tmp);
+
     });
 }(jQuery));
