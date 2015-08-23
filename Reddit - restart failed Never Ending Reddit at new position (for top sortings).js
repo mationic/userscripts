@@ -55,7 +55,7 @@
             if (e.target.tagName === 'DIV' && e.target.getAttribute('id') && e.target.getAttribute('id') === 'NERFail') {
                 button = $('<a>', {
                     'text': 'search for working link to continue NER',
-                    'style': 'color:red;cursor:pointer;'
+                    'style': 'cursor:pointer;'
                 }).click(function () {
 
                     button.data("checkedLinks", 0);
@@ -63,7 +63,7 @@
                         ids.push($(this).data('fullname'));
                     });
 
-                    linkSearch();
+                    return linkSearch();
                 });
                 $('div#NERFail>p.nextprev>a').first().after(button);
                 link = button.next().attr('href').split('t3_').shift();
