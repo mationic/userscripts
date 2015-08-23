@@ -2,7 +2,7 @@
 // @name           Reddit - restart failed Never Ending Reddit at new position (for top sortings)
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie
-// @version        0.0.11
+// @version        0.0.12
 // @description    Reddit Enhancement Suite "Never Ending Reddit" description
 // @updateURL      https://raw.githubusercontent.com/mationic/userscripts/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20new%20position%20(for%20top%20sortings).js
 // @downloadURL    https://raw.githubusercontent.com/mationic/userscripts/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20new%20position%20(for%20top%20sortings).js
@@ -53,7 +53,7 @@
                     'text': 'find link and continue browsing',
                     'href': '',
                     'style': 'color:red;'
-                }).mouseDown(function () {
+                }).mousedown(function () {
 
                     button.css('color', '');
                     button.data("checkedLinks", 0);
