@@ -2,7 +2,7 @@
 // @name           Reddit - restart failed Never Ending Reddit at new position (for top sortings)
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie
-// @version        0.0.8
+// @version        0.0.9
 // @description    Reddit Enhancement Suite "Never Ending Reddit" description
 // @updateURL      https://raw.githubusercontent.com/mationic/userscripts/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20new%20position%20(for%20top%20sortings).js
 // @downloadURL    https://raw.githubusercontent.com/mationic/userscripts/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20new%20position%20(for%20top%20sortings).js
@@ -49,16 +49,16 @@
 
 
         $(document).bind('DOMNodeInserted', function (e) {
-            if (e.target.tagName === 'DIV' && e.target.getAttribute('id') && e.target.getAttribute('id') === 'progressIndicator') {
-                $('.neverEndingReddit>p').first().remove();
-                $('.neverEndingReddit>p').append($('.neverEndingReddit>p>a').clone());
-                $('.neverEndingReddit>p').attr('class','nextprev');
-                $('.neverEndingReddit').attr('id','NERFail');
-                var tmp = $('div#NERFail');
-                var par = tmp.parent();
-                tmp.remove();
-                par.append(tmp);
-            }
+
+            $('.neverEndingReddit>p').first().remove();
+            $('.neverEndingReddit>p').append($('.neverEndingReddit>p>a').clone());
+            $('.neverEndingReddit>p').attr('class','nextprev');
+            $('.neverEndingReddit').attr('id','NERFail');
+            var tmp = $('div#NERFail');
+            var par = tmp.parent();
+            tmp.remove();
+            par.append(tmp);
+
             if (e.target.tagName === 'DIV' && e.target.getAttribute('id') && e.target.getAttribute('id') === 'NERFail') {
                 button = $('<a>', {
                     'text': 'find link and continue browsing',
