@@ -2,7 +2,7 @@
 // @name           Reddit - restart failed Never Ending Reddit at old position
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie
-// @version        0.1.0
+// @version        0.1.1
 // @description    When using the "Reddit Enhancement Suite" with "Never Ending Reddit" option, at some point the next page cannot be loaded anymore. Currently your only option is to reload Reddit and start from the top. This script searches bottom up for the next working entry it can use as starting point. This way you are still able continue browsing from the same position.
 // @updateURL      https://github.com/mationic/userscripts/raw/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20old%20position.user.js
 // @downloadURL    https://github.com/mationic/userscripts/raw/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20old%20position.user.js
