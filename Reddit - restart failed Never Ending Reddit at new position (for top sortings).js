@@ -2,7 +2,7 @@
 // @name           Reddit - restart failed Never Ending Reddit at new position (for top sortings)
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie
-// @version        0.0.19
+// @version        0.0.20
 // @description    Reddit Enhancement Suite "Never Ending Reddit" description
 // @updateURL      https://raw.githubusercontent.com/mationic/userscripts/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20new%20position%20(for%20top%20sortings).js
 // @downloadURL    https://raw.githubusercontent.com/mationic/userscripts/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20new%20position%20(for%20top%20sortings).js
@@ -15,7 +15,7 @@
 
 (function ($) {
     'use strict';
-    /*jslint browser:true, newcap:true */
+    /*jslint browser:true, regexp:true */
     /*global $, jQuery  */
 
     var button, link, ids = [],
@@ -28,8 +28,13 @@
             url = link + ids.pop();
 
             $.get(url, function (data) {
+                var count;
                 if ($(data).find('#siteTable div.thing').size()) {
                     button.text("link found - loading");
+                    count = url.match(/count=(\d+)/i);
+                    if (count.length > 1) {
+                        url.replace(count[0], 'count=' + (parseInt(count[1], 10) - parseInt(button.data("checkedLinks"), 10)));
+                    }
                     window.location.href = url;
                     return false;
                 }
@@ -50,7 +55,7 @@
             if (e.target.tagName === 'DIV' && e.target.getAttribute('id') && e.target.getAttribute('id') === 'NERFail') {
                 button = $('<a>', {
                     'text': 'Search for a link to continue NER',
-                    'href': 'java'+'script:;',
+                    'href': '#',
                     'style': 'color:red;'
                 }).click(function () {
 
