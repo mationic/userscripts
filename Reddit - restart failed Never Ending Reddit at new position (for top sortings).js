@@ -4,8 +4,8 @@
 // @author         jesuis-parapluie
 // @version        0.0.1
 // @description    ..
-// @updateURL
-// @downloadURL
+// @updateURL      https://raw.githubusercontent.com/mationic/userscripts/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20new%20position%20(for%20top%20sortings).js
+// @downloadURL    https://raw.githubusercontent.com/mationic/userscripts/master/Reddit%20-%20restart%20failed%20Never%20Ending%20Reddit%20at%20new%20position%20(for%20top%20sortings).js
 // @require        http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 // @include        /^https?:\/\/(.+\.)?reddit\.com\/top/?.*$/
 // @exclude        /^https?:\/\/(.+\.)?reddit\.com\/.+\/comments\/.*$/
