@@ -11,35 +11,38 @@
 //
 // @grant          GM_xmlhttpRequest
 //
-// @version        0.1.20
+// @version        0.1.21
 //
 // ==/UserScript==
 
 
 (function ($) {
     'use strict';
-    /*jslint browser: true,regexp: true, newcap: true, todo: true */
-    /*global $, jQuery, GM_xmlhttpRequest */
+    /*jslint browser: true, regexp: true, newcap: true*/
+    /*global jQuery, GM_xmlhttpRequest */
+    $.noConflict();
 
     var loadRatingsForItem = function () {
             var imdb = $('<h3>', {
                     'class': 'ratings',
-                    'html': 'IMDb: <span class="value">&nbsp;</span>'
+                    'html': '<div style="float: left; width: 60px;">IMDb / Meta:</div><span class="value">&nbsp;</span>'
                 }),
                 tomatoes = $('<h3>', {
                     'class': 'ratings',
-                    'html': 'R.T. c/u: <span class="value">&nbsp;</span>'
+                    'html': '<div style="float: left; width: 65px;">R.T. c/u:</div><span class="value">&nbsp;</span>'
                 }),
-                url;
-            $(this).find('.quick-icons').after(tomatoes);
-            $(this).find('.quick-icons').after(imdb);
-            $(this).addClass('ratingsloaded');
-
-            if ($(this).attr('data-type') === 'movie') {
-
+                dummy = $('<h3>', {
+                    'class': 'ratings',
+                    'style': 'opacity: 0.8; height: 18px;'
+                }),
                 url = $(this).attr('data-url');
+
+            if ($(this).attr('data-type') !== 'movie') {
+                $(this).find('.quick-icons').after(dummy).after(dummy.clone());
+            } else {
+                $(this).find('.quick-icons').after(tomatoes).after(imdb);
                 if (url) {
-                    $(imdb).find('span').html('<span style="color: gray!important; font-weight: normal; font-size: 11px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;loading<span>');
+                    $(imdb).find('span.value').html('<span style="color: #999!important; font-weight: normal; font-size: 11px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;loading<span>');
                     $.get(url, function (data) {
                         var imdb_id = $(data).find('.external a:contains("IMDB")').attr('href').split('/').pop();
                         GM_xmlhttpRequest({
@@ -47,29 +50,31 @@
                             url: "http://www.omdbapi.com/?plot=short&tomatoes=true&r=json&i=" + imdb_id,
                             onload: function (json) {
                                 var res = $.parseJSON(json.responseText);
-                                if (res.imdbRating === undefined || res.imdbRating === "N/A") {
-                                    res.imdbRating = '-   ';
-                                    res.imdbVotes = 0;
-                                }
                                 if (res.tomatoRating === undefined || res.tomatoRating === "N/A") {
                                     res.tomatoRating = '-';
                                 }
                                 if (res.tomatoUserRating === undefined || res.tomatoUserRating === "N/A") {
                                     res.tomatoUserRating = '-';
                                 }
-                                $(imdb).find('span').html(res.imdbRating + ' (' + res.imdbVotes + ' Votes)');
-                                $(tomatoes).find('span').html('&nbsp;&nbsp;&nbsp;&nbsp;' + res.tomatoRating + ' / ' + res.tomatoUserRating + '</span>');
+                                if (res.Metascore === undefined || res.Metascore === "N/A") {
+                                    res.Metascore = '-';
+                                }
+                                if (res.imdbRating === undefined || res.imdbRating === "N/A") {
+                                    $(imdb).find('span.value').html('-' + ' / ' + res.Metascore);
+                                } else {
+                                    $(imdb).find('span.value').html('<a href="http://www.imdb.com/title/' + res.imdbID + '">' + res.imdbRating + '<span style="font-size: 11px!important; font-style: normal; color: #999;"> (' + res.imdbVotes + ')</span></a>' + ' / ' + res.Metascore);
+                                }
+                                $(tomatoes).find('span.value').html(res.tomatoRating + ' / ' + res.tomatoUserRating + '</span>');
                             },
                             onerror: function () {
-                                $(imdb).find('span').html('<span style="color: #c11!important; font-weight: normal; font-size: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;failed<span>');
+                                $(imdb).find('span.value').html('<span style="color: #c11!important; font-weight: normal; font-size: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;failed<span>');
                             }
                         });
                     }).fail(function () {
-                        $(imdb).find('span').html('<span style="color: #c11!important; font-weight: normal; font-size: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;failed<span>');
+                        $(imdb).find('span.value').html('<span style="color: #c11!important; font-weight: normal; font-size: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;failed<span>');
                     });
                 }
             }
-
         },
         parseRating = function (item, type) {
             var r;
@@ -83,7 +88,10 @@
                 }
             }
             if (type === 'imdb') {
-                r = $(item).find("h3.ratings").text().match(/IMDb\:\W+(\d(\.\d)?).*/i);
+                r = $(item).find("h3.ratings").text().match(/IMDb \/ Meta:\W+(\d(\.\d)?).*/i);
+            }
+            if (type === 'metascore') {
+                r = $(item).find("h3.ratings").text().match(/IMDb \/ Meta:[^\/]+\/\W*(\d+).*/i);
             }
             if (type === 'rtcritic') {
                 r = $(item).find("h3.ratings").text().match(/R\.T\. c\/u\:\W+(\d(\.\d)?)-?\W*\/.*/i);
@@ -91,7 +99,7 @@
             if (type === 'rtuser') {
                 r = $(item).find("h3.ratings").text().match(/R\.T\. c\/u\:\W+\d?\.?\d?-?\W*\/\W*(\d(\.\d)?)-?.*/i);
             }
-            if (r !== null && r.length > 1) {
+            if (r !== null && r.length > 1 && r[1] !== '-') {
                 return r[1];
             }
             return -1;
@@ -144,7 +152,8 @@
 
             if (/^\/users\/.+\/(collection|ratings|lists\/|watchlist)/.test(window.location.pathname) && $('.trakt-icon-swap-vertical').next().find('ul a.rating').size() === 0) {
                 var sortMenu = $('.trakt-icon-swap-vertical').next().find('ul');
-                sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='imdb' data-sort-how='desc'>IMDb Rating</a>" }));
+                sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='imdb' data-sort-how='desc'>IMDb rating</a>" }));
+                sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='metascore' data-sort-how='desc'>Metascore</a>" }));
                 sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='rtcritic' data-sort-how='desc'>RottenTomatoes critic</a>" }));
                 sortMenu.append($('<li>', { html: "<a class='rating' data-sort-by='rtuser' data-sort-how='desc'>RottenTomatoes user</a>" }));
                 sortMenu.find('a.rating').click(sortByRating);
@@ -157,15 +166,14 @@
                 $(window).off('resize', setPositioning);
             }
             if ($("div.grid-item[data-type='movie']").size() > 0) {
-                $('div.grid-item').not('.ratingsloaded').each(loadRatingsForItem);
+                $("div.grid-item").not('.ratingsloaded').each(loadRatingsForItem);
             }
         };
 
 
     $(window).ready(function () {
-
-        $('head').append('<style>.ratings { padding-top:2px!important; margin-top: 0px!important; margin-left:1px!important; margin-right:1px!important; padding-left: 10px!important; background-color: #292D41; color: white; font-size: 12px!important; text-align: left!important; };</style>');
-        $('head').append('<style>.value { padding-left: 8px!important; font-weight: bolder!important; font-size: 13px!important; };</style><style>.quick-icons { border-bottom:none!important; };</style>');
+        $('head').append('<style>h3.ratings, h3.ratings a { padding-top:4px!important; padding-bottom:0px!important; padding-left: 5px!important; margin-top: 0px!important; margin-left:1px!important; margin-right:1px!important; background-color: #292D41; color: white; font-size: 10px!important; text-align: left!important; };</style>');
+        $('head').append('<style>span.value,  span.value>a { padding-left: 4px!important; font-weight: bolder!important; font-size: 12px!important; };</style><style>.quick-icons { border-bottom:none!important; };</style>');
         init();
 
         $(window).on('DOMNodeInserted', function (e) {
