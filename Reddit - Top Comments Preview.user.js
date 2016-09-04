@@ -2,7 +2,7 @@
 // @name           Reddit - Top Comments Preview
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie, Erik Wannebo, gavin19
-// @version        2.01
+// @version        2.02
 // @description    Preview to the top comments on Reddit (+ optional: autoload comments, autoload images, autohide sidebar)
 // @homepage       https://github.com/mationic/userscripts/blob/master/Reddit%20-%20Top%20Comments%20Preview.readme.md
 // @updateURL      https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
