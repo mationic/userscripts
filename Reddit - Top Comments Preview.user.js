@@ -262,7 +262,7 @@
                         document.querySelector('.RES-keyNav-activeElement .toplink').click();
                     }
                 });
-                if (GM_getValue('autoExpandImages', false)) { document.querySelector('#viewImagesButton').click(); }
+                if (GM_getValue('autoExpandImages', false)) { document.querySelector('.res-show-images input').click(); }
             }
 
 
