@@ -2,7 +2,7 @@
 // @name           Reddit - Top Comments Preview
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie, Erik Wannebo, gavin19
-// @version        2.02
+// @version        2.03
 // @description    Preview to the top comments on Reddit (+ optional: autoload comments, autoload images, autohide sidebar)
 // @homepage       https://github.com/mationic/userscripts/blob/master/Reddit%20-%20Top%20Comments%20Preview.readme.md
 // @updateURL      https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
@@ -42,7 +42,7 @@
             cointainSameElement: function (a1, a2) {
                 var i = 0;
                 for (i = 0; i < a1.length; i += 1) {
-                    if (a2.contains(a1[i])) {
+                    if (a2 !== null && a2.contains(a1[i])) {
                         return true;
                     }
                 }
@@ -98,7 +98,9 @@
                 comments.classList.add('loading');
                 expando = entry.querySelector('.expando-button');
 
-                if (ele.classList.contains('clicked')) { commentPosition = options.commentsAtBottom_topLinks; }
+                if (ele.classList.contains('clicked')) {
+                    commentPosition = options.commentsAtBottom_topLinks;
+                }
 
                 if (expando !== null && expando.classList && helper.cointainSameElement(commentPosition, expando.classList)) {
                     addToBottom = true;
@@ -107,7 +109,7 @@
                 if (addToBottom) {
                     entry.appendChild(comments);
                 } else {
-                    entry.insertBefore(comments, entry.querySelector('.expando'));
+                    entry.insertBefore(comments, entry.querySelector('.res-expando-box'));
                 }
             }
             if (comments.classList.contains('loading')) {
@@ -214,7 +216,9 @@
                     status = 'hide';
                     helper.toggleView('.side');
                     GM_setValue('sideBarToggle', !GM_getValue('sideBarToggle', true));
-                    if (GM_getValue('sideBarToggle')) { status = 'show'; }
+                    if (GM_getValue('sideBarToggle')) {
+                        status = 'show';
+                    }
                     document.querySelector('#sidebarswitch').innerHTML = status + ' sidebar';
                 });
                 document.querySelector('.tabmenu').appendChild(sidebar);
@@ -229,7 +233,9 @@
                 loadbar.className = 'aubox';
                 loadbar.innerHTML = '<a>load</a>';
                 if (document.querySelector('#RESConsoleVersion') !== null) {
-                    if (GM_getValue('autoExpandImages', false)) { buttonStatus = 'enabled'; }
+                    if (GM_getValue('autoExpandImages', false)) {
+                        buttonStatus = 'enabled';
+                    }
                     spanImages = document.createElement('span');
                     spanImages.innerHTML = '<a href="#" class="' + buttonStatus + '">images</a>';
                     spanImages.addEventListener('click', function () {
@@ -240,7 +246,9 @@
                 }
 
                 buttonStatus = 'disabled';
-                if (GM_getValue('autoLoadComments', false)) { buttonStatus = 'enabled'; }
+                if (GM_getValue('autoLoadComments', false)) {
+                    buttonStatus = 'enabled';
+                }
                 spanComments = document.createElement('span');
                 spanComments.innerHTML = '<a href="#" class="' + buttonStatus + '">comments</a>';
                 spanComments.addEventListener('click', function () {
@@ -256,32 +264,34 @@
 
 
             if (!options.disableShortCut && document.querySelector('#RESConsoleVersion') !== null) {
-
                 window.addEventListener('keyup', function (e) {
                     if (e.keyCode === 84 && document.querySelector('.RES-keyNav-activeElement')) { //t: keycode 84
                         document.querySelector('.RES-keyNav-activeElement .toplink').click();
                     }
                 });
-                if (GM_getValue('autoExpandImages', false)) { document.querySelector('.res-show-images input').click(); }
             }
 
 
-            document.body.addEventListener('DOMNodeInserted', function (e) {
+            if (GM_getValue('autoExpandImages', false)) {
+                document.querySelector('.res-show-images input').click();
+            }
 
+            document.body.addEventListener('DOMNodeInserted', function (e) {
                 if ((e.target.tagName === 'DIV') && (e.target.getAttribute('id') && e.target.getAttribute('id').indexOf('siteTable') !== -1)) {
 
                     addTopLinks();
 
-                } else if (GM_getValue('autoLoadComments', false) && (e.target.tagName === 'DIV') && (e.target.classList.contains('madeVisible') || e.target.classList.contains('usertext'))) {
+                } else if (GM_getValue('autoLoadComments', false) && (e.target.tagName === 'DIV') && e.target.parentNode && e.target.parentNode.classList.contains('res-expando-box')) {
+                    setTimeout(function () {
+                        var comments = e.target.parentNode.parentNode.querySelector('.commentbox'),
+                            expando = e.target.parentNode.parentNode.querySelector('.expando-button'),
+                            parent = comments.parentNode;
 
-                    var comments = e.target.parentNode.querySelector('.commentbox'),
-                        expando = e.target.parentNode.querySelector('.expando-button'),
-                        parent = comments.parentNode;
-
-                    if (expando !== null && comments !== null && expando.classList && helper.cointainSameElement(options.commentsAtBottom_autoLoad, expando.classList)) {
-                        parent.removeChild(comments);
-                        parent.appendChild(comments);
-                    }
+                        if (!comments.classList.contains('clicked') && expando !== null && helper.cointainSameElement(options.commentsAtBottom_autoLoad, expando.classList)) {
+                            parent.removeChild(comments);
+                            parent.appendChild(comments);
+                        }
+                    }, 20);
                 }
 
             }, true);
@@ -291,9 +301,13 @@
         };
 
     if (document.body) {
-        setTimeout(function () { init(); }, 300);
+        setTimeout(function () {
+            init();
+        }, 300);
     } else {
-        window.addEventListener('load', function () { init(); }, false);
+        window.addEventListener('load', function () {
+            init();
+        }, false);
     }
 
 }());
