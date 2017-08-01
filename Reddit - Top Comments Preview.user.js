@@ -2,7 +2,7 @@
 // @name           Reddit - Top Comments Preview
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie, Erik Wannebo, gavin19
-// @version        2.04
+// @version        2.05
 // @description    Preview to the top comments on Reddit (+ optional: autoload comments, autoload images, autohide sidebar)
 // @homepage       https://github.com/mationic/userscripts/blob/master/Reddit%20-%20Top%20Comments%20Preview.readme.md
 // @updateURL      https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
@@ -89,7 +89,7 @@
                 addToBottom = false,
                 commentPosition = options.commentsAtBottom_autoLoad,
                 comments = document.querySelector('#preview' + articleID),
-                entry = ele.parentNode.parentNode.parentNode;
+                entry = ele.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector('.entry');
 
             if (comments === null) {
                 comments = document.createElement('div');
@@ -281,10 +281,10 @@
 
                     addTopLinks();
 
-                } else if (GM_getValue('autoLoadComments', false) && (e.target.tagName === 'DIV') && e.target.parentNode && e.target.parentNode.classList.contains('res-expando-box')) {
+                } else if (GM_getValue('autoLoadComments', false) && (e.target.tagName === 'DIV') && e.target.parentNode && e.target.parentNode.parentNode && e.target.parentNode.parentNode.classList.contains('res-expando-box')) {
                     setTimeout(function () {
-                        var comments = e.target.parentNode.parentNode.querySelector('.commentbox'),
-                            expando = e.target.parentNode.parentNode.querySelector('.expando-button'),
+                        var comments = e.target.parentNode.parentNode.parentNode.querySelector('.commentbox'),
+                            expando = e.target.parentNode.parentNode.parentNode.querySelector('.expando-button'),
                             parent = comments.parentNode;
 
                         if (!comments.classList.contains('clicked') && expando !== null && helper.cointainSameElement(options.commentsAtBottom_autoLoad, expando.classList)) {
