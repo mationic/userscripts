@@ -29,15 +29,10 @@ There is also an option to change the comment sorting for the preview.
 - Fixed GreaseMonkey (ver 4.2)
 - Fixed RES bug (new comments didn't load sometimes)
 
-
-----------
-
-
 -------
 
 **v2.00**
 
- 
 - Added limit for comment requests repetition
 - Adjusted nightmode for code and pre blocks, revised css code.
 - Ignoring entries marked as RES duplicate
