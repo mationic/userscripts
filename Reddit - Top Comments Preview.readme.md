@@ -20,14 +20,15 @@ Features:
 If you don't care about the new features and just want the old comment preview, you can disable the features in the options part of the script.
 There is also an option to change the comment sorting for the preview.
 
+**This script doesn't work with GreaseMonkey, use TamperMonkey instead!**
 
 -------
 
-**v2.06**
+**v2.08**
 
 - Added option to skip comments from specific usernames
-- Fixed GreaseMonkey (ver 4.2)
 - Fixed RES bug (new comments didn't load sometimes)
+- Fixed hide sidebar in comment section
 
 -------
 

@@ -2,18 +2,15 @@
 // @name           Reddit - Top Comments Preview
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie, Erik Wannebo, gavin19
-// @version        2.07
+// @version        2.08
 // @description    Preview to the top comments on Reddit (+ optional: autoload comments, autoload images, autohide sidebar)
 // @homepageURL    https://github.com/mationic/userscripts/blob/master/Reddit%20-%20Top%20Comments%20Preview.readme.md
 // @updateURL      https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
 // @downloadURL    https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
 // @include        /^https?:\/\/(.+\.)?reddit\.com\/?.*$/
-// @exclude        /^https?:\/\/(.+\.)?reddit\.com\/.+\/comments\/.*$/
-// @require        https://greasyfork.org/scripts/33537-grant-none-shim-js/code/grant-none-shimjs.js?version=220721
 // @grant          GM_getValue
 // @grant          GM_setValue
 // ==/UserScript==
-
 
 (function () {
     'use strict';
@@ -30,8 +27,8 @@
             /* Options: 'selftext', 'image', 'video-muted' (gif/gfy etc), 'video'     */
             commentsAtBottom_autoLoad: ['selftext', 'image', 'video-muted', 'video'],
             commentsAtBottom_topLinks: [],
-            /* Don't show comments from specific usernames                            */
-            skipCommentsFrom: ['AutoModerator', 'hoosakiwi', 'SavageAxeBot', 'PoliticalHumorBot', 'WritingPromptsRobot'],
+            /* Don't show comments from following usernames                           */
+            skipCommentsFrom: ['AutoModerator', 'WholesomeBot', 'PoliticalHumorBot', 'SavageAxeBot', 'movieDetailsModBot', 'WritingPromptsRobot'],
             /* Disable option for hiding the sidebar. */
             disableSidebarButton: false,
             /* Disable option for autoloading images and comments. */
@@ -194,7 +191,7 @@
                     ".loaderror:before{content:\" loading failed \";color:red} .loading:before{content:\"Loading...\"} .res-nightmode .loaderror:before{content:\" loading failed \";color:#E63A3A}",
                     "div[id^=preview] .md *{white-space:normal} div[id^=preview] .md code{white-space:pre} div[id^=preview] .md pre{overflow:visible} div[id^=preview]>*{font-size:small}",
                     "div[id^=preview] .ulink,div[id^=preview] .md a{font-weight:700;color:#369!important} .listing-page .buttons li{vertical-align:top} .toplink{color:#FF4500!important;text-decoration:none}",
-                    ".permalink{float:right;color:#666} .points{color:#333;font-weight:700;margin-left:.5em}",
+                    ".permalink{float:right;color:#666;margin-left:.5em} .points{color:#333;font-weight:700;margin-left:.5em}",
                     ".res-nightmode div[id^=preview] pre,.res-nightmode div[id^=preview] code,.res-nightmode .link .md pre{border:1px solid #222!important;background:#282828!important;background-color:#282828!important}",
                     ".res-nightmode div[id^=preview] .ulink,.res-nightmode div[id^=preview] .md a{color:#1496dc!important} .res-nightmode div[id^=preview]{background:#333!important;border-color:#666!important}",
                     ".res-nightmode div[id^=preview] .md{background:#555!important;border-color:#222!important} .res-nightmode .toplink{color:#eee!important}",
@@ -220,13 +217,11 @@
                 }
                 sidebar.innerHTML = '<a id="sidebarswitch">' + status + ' sidebar</a>';
                 sidebar.addEventListener('click', function () {
-                    status = 'hide';
-                    helper.toggleView('.side');
                     GM_setValue('sideBarToggle', !GM_getValue('sideBarToggle', true));
-                    if (GM_getValue('sideBarToggle')) {
-                        status = 'show';
-                    }
-                    document.querySelector('#sidebarswitch').innerHTML = status + ' sidebar';
+                    status = 'hide';
+                    if (GM_getValue('sideBarToggle', true)) { status = 'show'; }
+                    this.querySelector('a').innerHTML = status + ' sidebar';
+                    helper.toggleView('.side');
                 });
                 document.querySelector('.tabmenu').appendChild(sidebar);
             } else {
@@ -235,7 +230,7 @@
             }
 
 
-            if (!options.disableAutoloadButton) {
+            if (!options.disableAutoloadButton && document.location.pathname.indexOf('/comments/') === -1) {
                 loadbar = document.createElement('li');
                 loadbar.className = 'aubox';
                 loadbar.innerHTML = '<a>load</a>';
@@ -264,7 +259,7 @@
                 });
                 loadbar.appendChild(spanComments);
                 document.querySelector('.tabmenu').appendChild(loadbar);
-            } else {
+            } else if (options.disableAutoloadButton) {
                 GM_setValue('autoExpandImages', false);
                 GM_setValue('autoLoadComments', false);
             }
@@ -305,7 +300,9 @@
             }, true);
 
             addStyle();
-            addTopLinks();
+            if (document.location.pathname.indexOf('/comments/') === -1) {
+                addTopLinks();
+            }
         };
 
     if (document.body) {
