@@ -2,13 +2,14 @@
 // @name           Reddit - Top Comments Preview
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie, Erik Wannebo, gavin19
-// @version        2.05
+// @version        2.06
 // @description    Preview to the top comments on Reddit (+ optional: autoload comments, autoload images, autohide sidebar)
-// @homepage       https://github.com/mationic/userscripts/blob/master/Reddit%20-%20Top%20Comments%20Preview.readme.md
+// @homepageURL    https://github.com/mationic/userscripts/blob/master/Reddit%20-%20Top%20Comments%20Preview.readme.md
 // @updateURL      https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
 // @downloadURL    https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
 // @include        /^https?:\/\/(.+\.)?reddit\.com\/?.*$/
 // @exclude        /^https?:\/\/(.+\.)?reddit\.com\/.+\/comments\/.*$/
+// @require        https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
 // @grant          GM_getValue
 // @grant          GM_setValue
 // ==/UserScript==
@@ -29,6 +30,8 @@
             /* Options: 'selftext', 'image', 'video-muted' (gif/gfy etc), 'video'     */
             commentsAtBottom_autoLoad: ['selftext', 'image', 'video-muted', 'video'],
             commentsAtBottom_topLinks: [],
+            /* Don't show comments from specific usernames                            */
+            skipCommentsFrom: ['AutoModerator', 'hoosakiwi', 'SavageAxeBot', 'PoliticalHumorBot', 'WritingPromptsRobot'],
             /* Disable option for hiding the sidebar. */
             disableSidebarButton: false,
             /* Disable option for autoloading images and comments. */
@@ -65,19 +68,23 @@
                 article = document.querySelector('#preview' + articleID);
             if (article && article.classList.contains('loading')) {
                 for (i = 0; i < len; i += 1) {
-                    content = comments[1].data.children[i].data.body_html;
-                    if (content) {
-                        contentDiv = document.createElement('div');
-                        contentDiv.innerHTML = content;
-                        content = contentDiv.firstChild.textContent;
-                        author = comments[1].data.children[i].data.author;
-                        score = comments[1].data.children[i].data.score;
-                        permalink = threadLink + comments[1].data.children[i].data.id;
-                        newHTML += (i > 0 ? '<hr>' : '');
-                        newHTML += '<a class="ulink" target="_blank" href="/u/' + author;
-                        newHTML += '">' + author + '</a>';
-                        newHTML += '<span class="points">| score: ' + score + '</span>';
-                        newHTML += '<a class="permalink" target="_blank" href="' + permalink + '">permalink</a><br />' + content;
+                    if (options.skipCommentsFrom.indexOf(comments[1].data.children[i].data.author) !== -1) {
+                        len += 1;
+                    } else {
+                        content = comments[1].data.children[i].data.body_html;
+                        if (content) {
+                            contentDiv = document.createElement('div');
+                            contentDiv.innerHTML = content;
+                            content = contentDiv.firstChild.textContent;
+                            author = comments[1].data.children[i].data.author;
+                            score = comments[1].data.children[i].data.score;
+                            permalink = threadLink + comments[1].data.children[i].data.id;
+                            newHTML += (newHTML !== '' ? '<hr>' : '');
+                            newHTML += '<a class="ulink" target="_blank" href="/u/' + author;
+                            newHTML += '">' + author + '</a>';
+                            newHTML += '<span class="points">| score: ' + score + '</span>';
+                            newHTML += '<a class="permalink" target="_blank" href="' + permalink + '">permalink</a><br />' + content;
+                        }
                     }
                 }
                 article.classList.remove('loading');
@@ -276,24 +283,25 @@
                 document.querySelector('.res-show-images a').click();
             }
 
-            document.body.addEventListener('DOMNodeInserted', function (e) {
-                if ((e.target.tagName === 'DIV') && (e.target.getAttribute('id') && e.target.getAttribute('id').indexOf('siteTable') !== -1)) {
-
+            document.body.addEventListener('DOMSubtreeModified', function (e) {
+                if (e.target.tagName === 'DIV' && e.target.className && e.target.className.indexOf('linklisting') !== -1) {
                     addTopLinks();
+                }
+            }, true);
 
-                } else if (GM_getValue('autoLoadComments', false) && (e.target.tagName === 'DIV') && e.target.parentNode && e.target.parentNode.parentNode && e.target.parentNode.parentNode.classList.contains('res-expando-box')) {
+            document.body.addEventListener('DOMNodeInserted', function (e) {
+                if (GM_getValue('autoLoadComments', false) && (e.target.tagName === 'DIV') && e.target.parentNode && e.target.parentNode.parentNode && e.target.parentNode.parentNode.classList.contains('res-expando-box')) {
                     setTimeout(function () {
                         var comments = e.target.parentNode.parentNode.parentNode.querySelector('.commentbox'),
                             expando = e.target.parentNode.parentNode.parentNode.querySelector('.expando-button'),
-                            parent = comments.parentNode;
+                            parent = comments !== null ? comments.parentNode : null;
 
-                        if (!comments.classList.contains('clicked') && expando !== null && helper.cointainSameElement(options.commentsAtBottom_autoLoad, expando.classList)) {
+                        if (comments !== null && !comments.classList.contains('clicked') && expando !== null && helper.cointainSameElement(options.commentsAtBottom_autoLoad, expando.classList)) {
                             parent.removeChild(comments);
                             parent.appendChild(comments);
                         }
                     }, 20);
                 }
-
             }, true);
 
             addStyle();

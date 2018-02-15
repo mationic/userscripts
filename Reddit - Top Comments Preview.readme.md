@@ -8,6 +8,7 @@ Features:
  - colorschemes for normal and RES nightly mode in (thanks to gavin19)
  - Option for auto-expanding images
  - Option for for autoloading all comments
+ - Skips comments from known automoderators
  - Automatically retries to add comments if request fails
  - Option for automatically hide side bar / toggle visibility
  - Shortcut 't' to show/hide comments in RES
@@ -18,6 +19,18 @@ Features:
 
 If you don't care about the new features and just want the old comment preview, you can disable the features in the options part of the script.
 There is also an option to change the comment sorting for the preview.
+
+
+-------
+
+**v2.06**
+
+- Added option to skip comments from specific usernames
+- Fixed GreaseMonkey (ver 4.2)
+- Fixed RES bug (new comments didn't load sometimes)
+
+
+----------
 
 
 -------
