@@ -2,14 +2,14 @@
 // @name           Reddit - Top Comments Preview
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie, Erik Wannebo, gavin19
-// @version        2.06
+// @version        2.07
 // @description    Preview to the top comments on Reddit (+ optional: autoload comments, autoload images, autohide sidebar)
 // @homepageURL    https://github.com/mationic/userscripts/blob/master/Reddit%20-%20Top%20Comments%20Preview.readme.md
 // @updateURL      https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
 // @downloadURL    https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
 // @include        /^https?:\/\/(.+\.)?reddit\.com\/?.*$/
 // @exclude        /^https?:\/\/(.+\.)?reddit\.com\/.+\/comments\/.*$/
-// @require        https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
+// @require        https://greasyfork.org/scripts/33537-grant-none-shim-js/code/grant-none-shimjs.js?version=220721
 // @grant          GM_getValue
 // @grant          GM_setValue
 // ==/UserScript==
