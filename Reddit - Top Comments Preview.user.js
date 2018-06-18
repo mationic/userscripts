@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name           Reddit - Top Comments Preview New Design
+// @name           Reddit - Top Comments Preview (old & new design)
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie
-// @version        3.00
+// @version        3.01
 // @description    Preview to the top comments on Reddit (+ optional auto-load comments and images, auto-hide sidebar)
 // @homepageURL    https://github.com/mationic/userscripts/blob/master/Reddit%20-%20Top%20Comments%20Preview.readme.md
 // @updateURL      https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js

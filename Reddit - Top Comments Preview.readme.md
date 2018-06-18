@@ -32,6 +32,7 @@ There is also an option to change the comment sorting for the preview.
 - Completely rewritten for new design (uses jquery now)
 - Removed option to specify where to put comments for different entry types (not feasable with new design)
 
+-------
 
 **v2.08**
 
