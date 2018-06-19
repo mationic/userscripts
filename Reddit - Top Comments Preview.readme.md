@@ -24,7 +24,7 @@ Features:
 If you don't care about the new features and just want the old comment preview, you can disable the features in the options part of the script.
 There is also an option to change the comment sorting for the preview.
 
-**This script doesn't work with new version of GreaseMonkey, use TamperMonkey instead!**
+**This script doesn't work with new versions of GreaseMonkey, use TamperMonkey instead!**
 
 -------
 
