@@ -8,7 +8,8 @@
 // @updateURL      https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
 // @downloadURL    https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
-// @include        /^https?:\/\/(.+\.)?reddit\.com\/?.*$/
+// @match          *://*.reddit.com/*
+// @exclude        /.*\/comments\/.*/
 // @grant          GM_getValue
 // @grant          GM_setValue
 // ==/UserScript==
