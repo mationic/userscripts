@@ -2,13 +2,14 @@
 // @name           Reddit - Top Comments Preview (old & new design)
 // @namespace      https://greasyfork.org/users/5174-jesuis-parapluie
 // @author         jesuis-parapluie
-// @version        3.02
+// @version        3.03
 // @description    Preview to the top comments on Reddit (+ optional auto-load comments and images, auto-hide sidebar)
 // @homepageURL    https://github.com/mationic/userscripts/blob/master/Reddit%20-%20Top%20Comments%20Preview.readme.md
 // @updateURL      https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
 // @downloadURL    https://github.com/mationic/userscripts/raw/master/Reddit%20-%20Top%20Comments%20Preview.user.js
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
-// @include        /^https?:\/\/(.+\.)?reddit\.com\/?.*$/
+// @match          *://*.reddit.com/*
+// @exclude        /.*\/comments\/.*/
 // @grant          GM_getValue
 // @grant          GM_setValue
 // ==/UserScript==
@@ -34,6 +35,9 @@
             disableShortCut: false
         },
         helper = {
+            const: {
+                ID_REGEX: /\/comments\/([^/]+)/g
+            },
             prefix: {
                 item: "item-",
                 id: "toplink-",
@@ -225,15 +229,22 @@
                 return;
             }
             items.each(function () {
-                var id_index, comment_id, toplink,
+                var link, result, comment_id, toplink,
                     comment_link = $(this).find(design[design.active].comment_link);
                 if (comment_link.length === 0) {
-                    console.log("No link found for following Item:");
-                    console.log(this);
                     return;
                 }
-                id_index = comment_link.attr("href").indexOf("/comments/");
-                comment_id = comment_link.attr("href").substring(id_index + 10, id_index + 16);
+                link = comment_link.attr("href");
+                if (!link) {
+                    console.log("No link found " + comment_link);
+                    return;
+                }
+                result = new RegExp(helper.const.ID_REGEX).exec(link);
+                if (!Array.isArray(result) || result.length < 2) {
+                    console.log("Id not found in link: '" + link + "'");
+                    return;
+                }
+                comment_id = result[1];
                 $(this).attr("id", helper.prefix.item + comment_id);
                 toplink = $("<a>", {
                     "class": "toplink",
